@@ -1,0 +1,12 @@
+# Ignore the triangle project directory when committing from the public_html repo
+triangle/
+
+# Common local files you likely don't want in the repo
+.env
+*.log
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
