@@ -1,147 +1,142 @@
-<?php
-// This part handles the POST request from the JavaScript fetch call
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Disable execution time limit for this script, as loading the model can be slow.
-    set_time_limit(0);
+import os
+import sys
+import argparse
+import logging
+from llama_cpp import Llama
+from flask import Flask, request, render_template_string
 
-    // Get the JSON payload sent from the frontend
-    $json_data = file_get_contents('php://input');
-    
-    // The Python Flask server URL.
-    // IMPORTANT: If your Python server is on a different machine, replace 127.0.0.1 with its IP address.
-    $ai_server_url = 'http://127.0.0.1:5000/ask';
+# --- Logging Setup ---
+# Log to stdout, which is redirected to a file by the control script
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    stream=sys.stdout
+)
 
-    // Set headers for streaming text and disable compression.
-    header('Content-Type: text/plain; charset=utf-8');
-    header('X-Content-Type-Options: nosniff');
-    header('Content-Encoding: none;');
+# Suppress llama_cpp's initial output for a cleaner experience
+class SuppressStderr:
+    def __enter__(self):
+        self._original_stderr = sys.stderr
+        sys.stderr = open(os.devnull, 'w')
 
-    // Disable PHP's output buffering.
-    while (ob_get_level() > 0) {
-        ob_end_clean();
-    }
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        sys.stderr.close()
+        sys.stderr = self._original_stderr
 
-    // --- Primary Method: Try connecting to the running server ---
-    $ch = curl_init($ai_server_url);
+# --- AI Model Class ---
+class AIModel:
+    def __init__(self):
+        self.model_path = '/home/asher/github/ai/models/llama-7b-hf'
+        self.default_system_prompt = "You are a helpful assistant. Keep your answers concise."
+        self.max_system_prompt_chars = 8000 # A safe character limit to avoid context overflow
 
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); // Add a 5-second connection timeout
-    
-    // This function is called for each chunk of data received from the server.
-    curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($curl, $data) {
-        // Echo the chunk immediately to the browser.
-        echo $data;
-        // Flush the output buffer.
-        flush();
-        // Return the number of bytes written.
-        return strlen($data);
-    });
-
-    // Execute the request
-    curl_exec($ch);
-    $curl_error_num = curl_errno($ch);
-    $curl_error_msg = curl_error($ch);
-    curl_close($ch);
-
-    // --- Fallback Method: If server connection failed, run script directly ---
-    if ($curl_error_num === CURLE_COULDNT_CONNECT) {
-        echo "[Warning: AI server not running. Using slower direct execution mode...]\n\n";
-        flush();
-        
-        $data = json_decode($json_data, true);
-
-        if (empty($data['question'])) {
-            http_response_code(400);
-            echo "Error: No question provided in fallback mode.";
-            exit;
-        }
-        
-        // Build the command for direct execution
-        $python_script_path = '/home/asher/github/ai/ai.py';
-        $command = 'python3 ' . escapeshellarg($python_script_path) . ' -q ' . escapeshellarg($data['question']);
-
-        // Add system prompt if provided
-        if (!empty($data['system_prompt'])) {
-            $command .= ' -s ' . escapeshellarg($data['system_prompt']);
-        }
-
-        // Add other generation parameters from the JSON payload
-        $params = [
-            'temperature'    => '-t', 'top_k' => '--top_k', 'top_p' => '--top_p',
-            'repeat_penalty' => '--repeat_penalty', 'max_tokens' => '--max_tokens',
-            'mirostat_mode'  => '--mirostat_mode', 'mirostat_tau' => '--mirostat_tau',
-            'mirostat_eta'   => '--mirostat_eta',
-        ];
-
-        foreach ($params as $key => $cli_arg) {
-            if (isset($data[$key]) && $data[$key] !== '') {
-                $command .= ' ' . $cli_arg . ' ' . escapeshellarg($data[$key]);
+        self.config = {
+            "model_path": self.model_path,
+            "llama_params": {
+                "temperature": 0.7,
+                "max_tokens": 150,
+                "top_k": 50,
+                "top_p": 0.95,
+                "repeat_penalty": 1.1,
+                "mirostat_mode": 0,
+                "mirostat_tau": 5.0,
+                "mirostat_eta": 0.1,
             }
         }
+        logging.info("AI Core: Loading model...")
+        try:
+            with SuppressStderr():
+                self.llm = Llama(model_path=self.config["model_path"], **self.config["llama_params"])
+            logging.info("AI Core: Model loaded successfully.")
+        except Exception as e:
+            logging.error(f"!!! FATAL: Error loading model: {e}")
+            # We can also use notify-send here to alert the user of a failure
+            os.system(f'notify-send "AI Model Error" "Could not load the language model. Check terminal." -i error')
 
-        // Use proc_open for real-time streaming
-        $descriptorspec = [0 => ["pipe", "r"], 1 => ["pipe", "w"], 2 => ["pipe", "w"]];
-        $process = proc_open($command, $descriptorspec, $pipes);
 
-        if (is_resource($process)) {
-            fclose($pipes[0]);
+    def ask(self, user_question, system_prompt_override, generation_params):
+        """
+        Takes a user's question and params, gets a response from the model, and returns it as a stream generator.
+        """
+        if not self.llm:
+            logging.warning("AIModel.ask: Model not loaded, yielding error.")
+            yield "Error: The AI model is not loaded."
+            return
 
-            // Stream standard output
-            while ($line = fread($pipes[1], 1024)) {
-                echo $line;
-                flush();
-            }
+        final_system_prompt = system_prompt_override if system_prompt_override else self.default_system_prompt
+        logging.info("AIModel.ask: Received new question.")
 
-            // After the process finishes, check for and display any errors
-            $stderr_output = stream_get_contents($pipes[2]);
-            if (!empty($stderr_output)) {
-                echo "\n\n--- SCRIPT ERRORS ---\n";
-                echo $stderr_output;
-                flush();
-            }
+        # Truncate system_prompt if it's too long to prevent crashes
+        if len(final_system_prompt) > self.max_system_prompt_chars:
+            final_system_prompt = final_system_prompt[:self.max_system_prompt_chars]
+            logging.warning(f"System prompt was too long and was truncated to {self.max_system_prompt_chars} characters.")
 
-            fclose($pipes[1]);
-            fclose($pipes[2]);
-            proc_close($process);
-        } else {
-            http_response_code(500);
-            echo "Error: Could not execute the AI model script in fallback mode.";
+        messages = [
+            {"role": "system", "content": final_system_prompt},
+            {"role": "user", "content": user_question},
+        ]
+
+        # Prepare generation parameters, using defaults where not specified
+        final_gen_params = {
+            "temperature": 0.7,
+            "max_tokens": 150,
+            "top_k": 50,
+            "top_p": 0.95,
+            "repeat_penalty": 1.1,
+            "mirostat_mode": 0,
+            "mirostat_tau": 5.0,
+            "mirostat_eta": 0.1,
         }
-    } else if ($curl_error_num !== 0) {
-        // Handle other, unexpected cURL errors
-        http_response_code(503);
-        echo "An unexpected error occurred while connecting to the AI service.\n\n";
-        echo "cURL Error (" . $curl_error_num . "): " . htmlspecialchars($curl_error_msg) . "\n\n";
-        echo "This might be a firewall issue. Please ensure port 5000 is accessible from your web server.\n";
-        echo "You can test this with: curl http://127.0.0.1:5000";
-    }
 
-    exit;
-}
+        # Update with any user-specified parameters, converting types as necessary
+        for key, value in generation_params.items():
+            if value is not None:
+                try:
+                    if key in ["temperature", "max_tokens", "top_k", "top_p", "repeat_penalty", "mirostat_tau", "mirostat_eta"]:
+                        # Convert to float for these parameters
+                        final_gen_params[key] = float(value)
+                    elif key == "mirostat_mode":
+                        # Convert to int for mirostat_mode
+                        final_gen_params[key] = int(value)
+                except (ValueError, TypeError):
+                    pass # Keep default if conversion fails
 
-// --- Helper function to check if the Python server is running ---
-function is_ai_server_running($host, $port, $timeout = 1) {
-    // Use fsockopen to attempt a connection without a long wait.
-    $fp = @fsockopen($host, $port, $errno, $errstr, $timeout);
-    if ($fp) {
-        fclose($fp);
-        return true;
-    }
-    return false;
-}
+        try:
+            logging.info("AIModel.ask: Calling create_chat_completion...")
+            response_stream = self.llm.create_chat_completion(
+                messages=messages,
+                stream=True,
+                **final_gen_params
+            )
+            logging.info("AIModel.ask: Stream created. Iterating over chunks...")
+            chunk_count = 0
+            for chunk in response_stream:
+                chunk_count += 1
+                content = chunk['choices'][0]['delta'].get('content')
+                if content:
+                    yield content
+            logging.info(f"AIModel.ask: Finished streaming {chunk_count} chunks.")
+        except Exception as e:
+            logging.error(f"Error during AI generation: {e}")
+            yield "Sorry, an error occurred while generating the response."
 
-// --- Main Page Logic (GET request) ---
-$is_server_running = is_ai_server_running('127.0.0.1', 5000);
-$default_system_prompt = "You are a helpful assistant. Keep your answers concise.";
-?>
+# --- Web Interface (using Flask) ---
+
+# Check if model loaded successfully before starting the web server
+ai_model = AIModel()
+if not ai_model.llm:
+    logging.critical("!!! FATAL: AI Model not loaded. Web server will not start.")
+    exit()
+
+app = Flask(__name__)
+
+HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat with AI (PHP)</title>
+    <title>Chat with AI (Flask)</title>
     <style>
         body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 20px; background-color: #f4f4f4; color: #333; }
         h1, h2 { color: #333; }
@@ -329,7 +324,7 @@ $default_system_prompt = "You are a helpful assistant. Keep your answers concise
                     if (isFirstChunk === false) {
                         responseP.textContent += '\n\n[Error: The connection was lost mid-stream. This is likely due to a server timeout because the AI model is very slow to load. For better performance, please run the AI server in the background.]';
                     } else {
-                        responseP.textContent = 'An error occurred while fetching the response: ' + error.message + '\n\n[Debug Tip: If the page hangs on "Thinking...", the AI server might be stuck. Check its logs for errors using the command: `bash /home/asher/github/ai/ai_server_control.sh logs`]';
+                        responseP.textContent = 'An error occurred while fetching the response: ' + error.message;
                     }
                 }
             } finally {
@@ -342,3 +337,75 @@ $default_system_prompt = "You are a helpful assistant. Keep your answers concise
     </script>
 </body>
 </html>
+"""
+
+@app.route('/')
+def index():
+    return render_template_string(HTML_TEMPLATE, default_system_prompt=ai_model.default_system_prompt)
+
+@app.route('/ask', methods=['POST'])
+def ask_route():
+    logging.info("Flask /ask: Received a new request.")
+    data = request.get_json()
+    if not data or not data.get('question'):
+        logging.warning("Flask /ask: Request rejected, no question provided.")
+        return "Error: No question provided", 400
+
+    user_question = data['question']
+    system_prompt_override = data.get('system_prompt')
+    generation_params = {
+        'temperature': data.get('temperature'),
+        'max_tokens': data.get('max_tokens'),
+        'top_k': data.get('top_k'),
+        'top_p': data.get('top_p'),
+        'repeat_penalty': data.get('repeat_penalty'),
+        'mirostat_mode': data.get('mirostat_mode'),
+        'mirostat_tau': data.get('mirostat_tau'),
+        'mirostat_eta': data.get('mirostat_eta'),
+    }
+
+    def generate():
+        logging.info("Flask /ask: Starting generation stream.")
+        for chunk in ai_model.ask(user_question, system_prompt_override, generation_params):
+            yield chunk
+        logging.info("Flask /ask: Finished generation stream.")
+
+    return app.response_class(generate(), mimetype='text/plain')
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="AI Model Server")
+    parser.add_argument('-q', '--question', type=str, help="Question to ask the AI model")
+    parser.add_argument('-s', '--system_prompt', type=str, help="System prompt for the AI model")
+    parser.add_argument('-t', '--temperature', type=float, help="Sampling temperature")
+    parser.add_argument('--top_k', type=int, help="Top-k sampling")
+    parser.add_argument('--top_p', type=float, help="Top-p (nucleus) sampling")
+    parser.add_argument('--repeat_penalty', type=float, help="Repeat penalty")
+    parser.add_argument('--mirostat_mode', type=int, help="Mirostat mode")
+    parser.add_argument('--mirostat_tau', type=float, help="Mirostat tau")
+    parser.add_argument('--mirostat_eta', type=float, help="Mirostat eta")
+    args = parser.parse_args()
+
+    # If a question is provided as a command-line argument, bypass the web server and answer directly
+    if args.question:
+        logging.info("--> Direct Question: " + args.question)
+        system_prompt_override = args.system_prompt if args.system_prompt else ai_model.default_system_prompt
+        generation_params = {
+            'temperature': args.temperature,
+            'max_tokens': args.max_tokens,
+            'top_k': args.top_k,
+            'top_p': args.top_p,
+            'repeat_penalty': args.repeat_penalty,
+            'mirostat_mode': args.mirostat_mode,
+            'mirostat_tau': args.mirostat_tau,
+            'mirostat_eta': args.mirostat_eta,
+        }
+        # Filter out None values
+        generation_params = {k: v for k, v in generation_params.items() if v is not None}
+
+        for chunk in ai_model.ask(args.question, system_prompt_override, generation_params):
+            print(chunk, end='', flush=True)
+        print() # Final newline
+    else:
+        logging.info("--> Web Server: Starting Flask server...")
+        logging.info("--> Web Server: Access the web UI at http://127.0.0.1:5000")
+        app.run(host='0.0.0.0', port=5000)
