@@ -171,9 +171,15 @@ $default_system_prompt = "You are a helpful assistant. Keep your answers concise
         .status-ok { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
         .status-warn { background-color: #fff3cd; border-color: #ffeeba; color: #856404; }
         .status-box code { background-color: rgba(0,0,0,0.05); padding: 2px 4px; border-radius: 3px; }
+        #system-usage { background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; margin-bottom: 20px; font-family: monospace; font-size: 14px; color: #495057; text-align: center; }
     </style>
 </head>
 <body>
+    <div id="system-usage">
+        CPU: <span id="cpu-usage">...</span>% | Memory: <span id="mem-usage">...</span>% 
+        (<span id="mem-used">...</span> GB / <span id="mem-total">...</span> GB)
+    </div>
+
     <div class="status-box <?php echo $is_server_running ? 'status-ok' : 'status-warn'; ?>">
         <?php if ($is_server_running): ?>
             <strong>Status:</strong> Connected to the fast AI backend server.
@@ -249,6 +255,32 @@ $default_system_prompt = "You are a helpful assistant. Keep your answers concise
 
     <script>
         let abortController = null;
+
+        function updateSystemStats() {
+            fetch('system_stats.php')
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('cpu-usage').textContent = data.cpu_percent;
+                    if (data.mem_info && data.mem_info.percent !== undefined) {
+                        document.getElementById('mem-usage').textContent = data.mem_info.percent;
+                        document.getElementById('mem-used').textContent = data.mem_info.used_gb;
+                        document.getElementById('mem-total').textContent = data.mem_info.total_gb;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching system stats:', error);
+                    document.getElementById('cpu-usage').textContent = 'ERR';
+                    document.getElementById('mem-usage').textContent = 'ERR';
+                });
+        }
+
+        // Update stats every 2 seconds
+        setInterval(updateSystemStats, 2000);
+        // Initial call to load stats immediately
+        document.addEventListener('DOMContentLoaded', updateSystemStats);
 
         function setupSlider(sliderId, displayId) {
             const slider = document.getElementById(sliderId);

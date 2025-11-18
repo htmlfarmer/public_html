@@ -45,12 +45,12 @@ class AIModel:
             },
             "generation_params": {
                 "temperature": 2.0,
-                "top_k": 40,
-                "top_p": 0.95,
+                "top_k": 0,      # Set to 0 to disable Top-K sampling for Mirostat
+                "top_p": 1.0,    # Set to 1.0 to disable Top-P sampling for Mirostat
                 "repeat_penalty": 1.1,
                 "max_tokens": 1024,
                 "stop": ["<|eot_id|>"],
-                "mirostat_mode": 0,
+                "mirostat_mode": 2,  # Enable Mirostat v2 by default
                 "mirostat_tau": 5.0,
                 "mirostat_eta": 0.1,
             }
@@ -130,199 +130,25 @@ if not ai_model.llm:
 
 app = Flask(__name__)
 
-# CORRECTED: HTML_TEMPLATE now uses Jinja2 placeholders, not PHP.
+# This HTML is only used to confirm the server is running when accessed directly.
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat with AI</title>
-    <style>
-        body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 20px; background-color: #f4f4f4; color: #333; }
-        h1, h2 { color: #333; }
-        #qa-form { display: flex; flex-direction: column; margin-bottom: 20px; }
-        #question-container { display: flex; }
-        #question { flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
-        button { padding: 10px 15px; border: none; background-color: #007bff; color: white; border-radius: 4px; cursor: pointer; margin-left: 10px; }
-        button:hover { background-color: #0056b3; }
-        button:disabled { background-color: #cccccc; }
-        #response-container { background-color: white; padding: 15px; border-radius: 4px; border: 1px solid #ddd; min-height: 50px; }
-        #response { white-space: pre-wrap; }
-        details { margin-top: 15px; border: 1px solid #ccc; border-radius: 4px; padding: 10px; }
-        summary { cursor: pointer; font-weight: bold; }
-        .param-grid { display: grid; grid-template-columns: 150px 1fr; gap: 10px; align-items: center; margin-top: 10px;}
-        .param-grid label { font-weight: bold; }
-        .param-grid input, .param-grid textarea, .param-grid select { width: 100%; box-sizing: border-box; padding: 5px; border-radius: 4px; border: 1px solid #ccc;}
-        .param-grid textarea { resize: vertical; min-height: 60px; }
-        .slider-container { display: flex; align-items: center; gap: 10px; }
-        .slider-container input { flex-grow: 1; }
-        .slider-container span { min-width: 35px; text-align: right; }
-        #stop-button { background-color: #dc3545; }
-        #stop-button:hover { background-color: #c82333; }
-    </style>
+    <title>AI Server Status</title>
 </head>
 <body>
-    <h1>Ask your local AI model a question?</h1>
-    <form id="qa-form">
-        <div id="question-container">
-            <input type="text" id="question" name="question" placeholder="Type your question here..." required autocomplete="off">
-            <button type="submit" id="ask-button">Ask</button>
-            <button type="button" id="stop-button" style="display: none;">Stop</button>
-        </div>
-        <details>
-            <summary>Advanced Options</summary>
-            <div class="param-grid">
-                <label for="system_prompt">System Prompt:</label>
-                <textarea id="system_prompt" placeholder="{{ default_system_prompt }}"></textarea>
-                
-                <label for="temperature">Temperature:</label>
-                <div class="slider-container">
-                    <input type="range" id="temperature" min="0" max="2" step="0.05" value="2.0">
-                    <span id="temperature-value">2.0</span>
-                </div>
-
-                <label for="max_tokens">Max Tokens:</label>
-                <input type="number" id="max_tokens" value="1024" min="1">
-                
-                <label for="top_k">Top K:</label>
-                <input type="number" id="top_k" value="40" min="0">
-
-                <label for="top_p">Top P:</label>
-                 <div class="slider-container">
-                    <input type="range" id="top_p" min="0" max="1" step="0.05" value="0.95">
-                    <span id="top_p-value">0.95</span>
-                </div>
-
-                <label for="repeat_penalty">Repeat Penalty:</label>
-                <div class="slider-container">
-                    <input type="range" id="repeat_penalty" min="1" max="2" step="0.05" value="1.1">
-                    <span id="repeat_penalty-value">1.1</span>
-                </div>
-
-                <label for="mirostat_mode">Mirostat Mode:</label>
-                <select id="mirostat_mode">
-                    <option value="0" selected>Disabled</option>
-                    <option value="1">Mirostat v1</option>
-                    <option value="2">Mirostat v2</option>
-                </select>
-
-                <label for="mirostat_tau">Mirostat Tau:</label>
-                <div class="slider-container">
-                    <input type="range" id="mirostat_tau" min="0" max="10" step="0.1" value="5.0">
-                    <span id="mirostat_tau-value">5.0</span>
-                </div>
-
-                <label for="mirostat_eta">Mirostat Eta:</label>
-                <div class="slider-container">
-                    <input type="range" id="mirostat_eta" min="0" max="1" step="0.01" value="0.1">
-                    <span id="mirostat_eta-value">0.1</span>
-                </div>
-            </div>
-        </details>
-    </form>
-    <h2>Answer:</h2>
-    <div id="response-container">
-        <p id="response">The answer will appear here.</p>
-    </div>
-
-    <script>
-        let abortController = null;
-
-        function setupSlider(sliderId, displayId) {
-            const slider = document.getElementById(sliderId);
-            const display = document.getElementById(displayId);
-            slider.addEventListener('input', () => display.textContent = slider.value);
-        }
-
-        setupSlider('temperature', 'temperature-value');
-        setupSlider('top_p', 'top_p-value');
-        setupSlider('repeat_penalty', 'repeat_penalty-value');
-        setupSlider('mirostat_tau', 'mirostat_tau-value');
-        setupSlider('mirostat_eta', 'mirostat_eta-value');
-
-        document.getElementById('stop-button').addEventListener('click', () => {
-            if (abortController) {
-                abortController.abort();
-            }
-        });
-
-        document.getElementById('qa-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const questionInput = document.getElementById('question');
-            const responseP = document.getElementById('response');
-            const askButton = document.getElementById('ask-button');
-            const stopButton = document.getElementById('stop-button');
-
-            abortController = new AbortController();
-
-            const payload = {
-                question: document.getElementById('question').value,
-                system_prompt: document.getElementById('system_prompt').value,
-                temperature: document.getElementById('temperature').value,
-                max_tokens: document.getElementById('max_tokens').value,
-                top_k: document.getElementById('top_k').value,
-                top_p: document.getElementById('top_p').value,
-                repeat_penalty: document.getElementById('repeat_penalty').value,
-                mirostat_mode: document.getElementById('mirostat_mode').value,
-                mirostat_tau: document.getElementById('mirostat_tau').value,
-                mirostat_eta: document.getElementById('mirostat_eta').value,
-            };
-
-            responseP.textContent = 'Thinking...';
-            askButton.disabled = true;
-            stopButton.style.display = 'inline-block';
-
-            try {
-                const response = await fetch('/ask', { // Use relative path for Flask
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                    signal: abortController.signal
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let isFirstChunk = true;
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    
-                    if (isFirstChunk) {
-                        responseP.textContent = '';
-                        isFirstChunk = false;
-                    }
-                    responseP.textContent += decoder.decode(value, { stream: true });
-                }
-
-            } catch (error) {
-                if (error.name === 'AbortError') {
-                    responseP.textContent = 'Response stopped by user.';
-                    console.log('Fetch aborted by user.');
-                } else {
-                    console.error('Fetch error:', error);
-                    responseP.textContent = 'An error occurred while fetching the response: ' + error.message;
-                }
-            } finally {
-                askButton.disabled = false;
-                stopButton.style.display = 'none';
-                questionInput.value = '';
-                abortController = null;
-            }
-        });
-    </script>
+    <h1>AI Server is Running</h1>
+    <p>This is the backend AI server. It is meant to be used with the PHP frontend.</p>
+    <p>To use the chat interface, please open <code>ai.php</code> in your browser.</p>
 </body>
 </html>
 """
 
 @app.route('/')
 def index():
-    return render_template_string(HTML_TEMPLATE, default_system_prompt=ai_model.default_system_prompt)
+    return render_template_string(HTML_TEMPLATE)
 
 @app.route('/ask', methods=['POST'])
 def ask_route():
