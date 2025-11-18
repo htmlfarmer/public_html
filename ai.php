@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         // Build the command for direct execution
-        $python_script_path = '/home/asher/github/ai/ai.py';
+        $python_script_path = './ai.py';
         $command = 'python3 ' . escapeshellarg($python_script_path) . ' -q ' . escapeshellarg($data['question']);
 
         // Add system prompt if provided
@@ -94,13 +94,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 flush();
             }
 
-            // After the process finishes, check for and display any errors
+            // After the process finishes, we will no longer display the stderr logs.
+            /*
             $stderr_output = stream_get_contents($pipes[2]);
             if (!empty($stderr_output)) {
                 echo "\n\n--- SCRIPT ERRORS ---\n";
                 echo $stderr_output;
                 flush();
             }
+            */
 
             fclose($pipes[1]);
             fclose($pipes[2]);
@@ -178,7 +180,7 @@ $default_system_prompt = "You are a helpful assistant. Keep your answers concise
         <?php else: ?>
             <strong>Status:</strong> AI backend server not running. Using slow fallback mode.
             <br>
-            <small>Responses may be delayed as the model is reloaded for each request. For fast responses, start the server: <code>bash /home/asher/github/ai/ai_server_control.sh start</code></small>
+            <small>For fast responses, start the server: <code>python3 /home/asher/public_html/ai.py</code></small>
         <?php endif; ?>
     </div>
 
@@ -205,12 +207,12 @@ $default_system_prompt = "You are a helpful assistant. Keep your answers concise
                 <input type="number" id="max_tokens" value="1024" min="1">
                 
                 <label for="top_k">Top K:</label>
-                <input type="number" id="top_k" value="40" min="0">
+                <input type="number" id="top_k" value="0" min="0">
 
                 <label for="top_p">Top P:</label>
                  <div class="slider-container">
-                    <input type="range" id="top_p" min="0" max="1" step="0.05" value="0.95">
-                    <span id="top_p-value">0.95</span>
+                    <input type="range" id="top_p" min="0" max="1" step="0.05" value="1.0">
+                    <span id="top_p-value">1.0</span>
                 </div>
 
                 <label for="repeat_penalty">Repeat Penalty:</label>
@@ -221,9 +223,9 @@ $default_system_prompt = "You are a helpful assistant. Keep your answers concise
 
                 <label for="mirostat_mode">Mirostat Mode:</label>
                 <select id="mirostat_mode">
-                    <option value="0" selected>Disabled</option>
+                    <option value="0">Disabled</option>
                     <option value="1">Mirostat v1</option>
-                    <option value="2">Mirostat v2</option>
+                    <option value="2" selected>Mirostat v2</option>
                 </select>
 
                 <label for="mirostat_tau">Mirostat Tau:</label>
@@ -329,7 +331,7 @@ $default_system_prompt = "You are a helpful assistant. Keep your answers concise
                     if (isFirstChunk === false) {
                         responseP.textContent += '\n\n[Error: The connection was lost mid-stream. This is likely due to a server timeout because the AI model is very slow to load. For better performance, please run the AI server in the background.]';
                     } else {
-                        responseP.textContent = 'An error occurred while fetching the response: ' + error.message + '\n\n[Debug Tip: If the page hangs on "Thinking...", the AI server might be stuck. Check its logs for errors using the command: `bash /home/asher/github/ai/ai_server_control.sh logs`]';
+                        responseP.textContent = 'An error occurred while fetching the response: ' + error.message + '\n\n[Debug Tip: If the page hangs on "Thinking...", the AI server might be stuck. Check its logs for errors using the command: `bash /home/asher/public_html/ai_server_control.sh logs`]';
                     }
                 }
             } finally {

@@ -6,11 +6,11 @@ from llama_cpp import Llama
 from flask import Flask, request, render_template_string
 
 # --- Logging Setup ---
-# Log to stdout, which is redirected to a file by the control script
+# Log to stderr to separate logs from the AI's stdout response.
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
-    stream=sys.stdout
+    stream=sys.stderr
 )
 
 # Suppress llama_cpp's initial output for a cleaner experience
@@ -26,18 +26,30 @@ class SuppressStderr:
 # --- AI Model Class ---
 class AIModel:
     def __init__(self):
-        self.model_path = '/home/asher/github/ai/models/llama-7b-hf'
+        """
+        Initializes the AI model by loading it into memory.
+        """
+        self.llm = None
+        # CORRECTED: Using the GGUF model path that is known to work.
+        self.model_path = "/home/asher/.lmstudio/models/lmstudio-community/gemma-3-1b-it-GGUF/gemma-3-1b-it-Q4_K_M.gguf"
         self.default_system_prompt = "You are a helpful assistant. Keep your answers concise."
         self.max_system_prompt_chars = 8000 # A safe character limit to avoid context overflow
 
         self.config = {
-            "model_path": self.model_path,
+            # CORRECTED: Restored the proper structure for model parameters.
             "llama_params": {
-                "temperature": 0.7,
-                "max_tokens": 150,
-                "top_k": 50,
+                "n_ctx": 4096,
+                "n_threads": 8,
+                "n_gpu_layers": 0,
+                "verbose": False
+            },
+            "generation_params": {
+                "temperature": 2.0,
+                "top_k": 40,
                 "top_p": 0.95,
                 "repeat_penalty": 1.1,
+                "max_tokens": 1024,
+                "stop": ["<|eot_id|>"],
                 "mirostat_mode": 0,
                 "mirostat_tau": 5.0,
                 "mirostat_eta": 0.1,
@@ -46,11 +58,10 @@ class AIModel:
         logging.info("AI Core: Loading model...")
         try:
             with SuppressStderr():
-                self.llm = Llama(model_path=self.config["model_path"], **self.config["llama_params"])
+                self.llm = Llama(model_path=self.model_path, **self.config["llama_params"])
             logging.info("AI Core: Model loaded successfully.")
         except Exception as e:
             logging.error(f"!!! FATAL: Error loading model: {e}")
-            # We can also use notify-send here to alert the user of a failure
             os.system(f'notify-send "AI Model Error" "Could not load the language model. Check terminal." -i error')
 
 
@@ -76,27 +87,16 @@ class AIModel:
             {"role": "user", "content": user_question},
         ]
 
-        # Prepare generation parameters, using defaults where not specified
-        final_gen_params = {
-            "temperature": 0.7,
-            "max_tokens": 150,
-            "top_k": 50,
-            "top_p": 0.95,
-            "repeat_penalty": 1.1,
-            "mirostat_mode": 0,
-            "mirostat_tau": 5.0,
-            "mirostat_eta": 0.1,
-        }
-
-        # Update with any user-specified parameters, converting types as necessary
+        # Combine default params with incoming ones, letting incoming ones overwrite
+        final_gen_params = self.config["generation_params"].copy()
+        
+        # Type conversion and filtering for incoming params
         for key, value in generation_params.items():
-            if value is not None:
+            if value is not None and value != '':
                 try:
-                    if key in ["temperature", "max_tokens", "top_k", "top_p", "repeat_penalty", "mirostat_tau", "mirostat_eta"]:
-                        # Convert to float for these parameters
+                    if key in ['temperature', 'top_p', 'repeat_penalty', 'mirostat_tau', 'mirostat_eta']:
                         final_gen_params[key] = float(value)
-                    elif key == "mirostat_mode":
-                        # Convert to int for mirostat_mode
+                    elif key in ['top_k', 'max_tokens', 'mirostat_mode']:
                         final_gen_params[key] = int(value)
                 except (ValueError, TypeError):
                     pass # Keep default if conversion fails
@@ -130,13 +130,14 @@ if not ai_model.llm:
 
 app = Flask(__name__)
 
+# CORRECTED: HTML_TEMPLATE now uses Jinja2 placeholders, not PHP.
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat with AI (Flask)</title>
+    <title>Chat with AI</title>
     <style>
         body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 20px; background-color: #f4f4f4; color: #333; }
         h1, h2 { color: #333; }
@@ -157,28 +158,13 @@ HTML_TEMPLATE = """
         .slider-container { display: flex; align-items: center; gap: 10px; }
         .slider-container input { flex-grow: 1; }
         .slider-container span { min-width: 35px; text-align: right; }
-        .prompt-notice { font-style: italic; color: #555; margin-bottom: 5px; }
         #stop-button { background-color: #dc3545; }
         #stop-button:hover { background-color: #c82333; }
-        .status-box { padding: 10px 15px; margin-bottom: 20px; border-radius: 4px; border: 1px solid; }
-        .status-ok { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
-        .status-warn { background-color: #fff3cd; border-color: #ffeeba; color: #856404; }
-        .status-box code { background-color: rgba(0,0,0,0.05); padding: 2px 4px; border-radius: 3px; }
     </style>
 </head>
 <body>
-    <div class="status-box <?php echo $is_server_running ? 'status-ok' : 'status-warn'; ?>">
-        <?php if ($is_server_running): ?>
-            <strong>Status:</strong> Connected to the fast AI backend server.
-        <?php else: ?>
-            <strong>Status:</strong> AI backend server not running. Using slow fallback mode.
-            <br>
-            <small>Responses may be delayed as the model is reloaded for each request. For fast responses, start the server: <code>bash /home/asher/github/ai/ai_server_control.sh start</code></small>
-        <?php endif; ?>
-    </div>
-
     <h1>Ask your local AI model a question?</h1>
-    <form id="qa-form" action="ai.php" method="post">
+    <form id="qa-form">
         <div id="question-container">
             <input type="text" id="question" name="question" placeholder="Type your question here..." required autocomplete="off">
             <button type="submit" id="ask-button">Ask</button>
@@ -188,7 +174,7 @@ HTML_TEMPLATE = """
             <summary>Advanced Options</summary>
             <div class="param-grid">
                 <label for="system_prompt">System Prompt:</label>
-                <textarea id="system_prompt" placeholder="<?php echo htmlspecialchars($default_system_prompt); ?>"></textarea>
+                <textarea id="system_prompt" placeholder="{{ default_system_prompt }}"></textarea>
                 
                 <label for="temperature">Temperature:</label>
                 <div class="slider-container">
@@ -288,7 +274,7 @@ HTML_TEMPLATE = """
             stopButton.style.display = 'inline-block';
 
             try {
-                const response = await fetch('ai.php', {
+                const response = await fetch('/ask', { // Use relative path for Flask
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
@@ -320,12 +306,7 @@ HTML_TEMPLATE = """
                     console.log('Fetch aborted by user.');
                 } else {
                     console.error('Fetch error:', error);
-                    // If we started receiving data and then the connection broke, it's likely a server timeout.
-                    if (isFirstChunk === false) {
-                        responseP.textContent += '\n\n[Error: The connection was lost mid-stream. This is likely due to a server timeout because the AI model is very slow to load. For better performance, please run the AI server in the background.]';
-                    } else {
-                        responseP.textContent = 'An error occurred while fetching the response: ' + error.message;
-                    }
+                    responseP.textContent = 'An error occurred while fetching the response: ' + error.message;
                 }
             } finally {
                 askButton.disabled = false;
@@ -352,7 +333,7 @@ def ask_route():
         return "Error: No question provided", 400
 
     user_question = data['question']
-    system_prompt_override = data.get('system_prompt')
+    system_prompt_override = data.get('system_prompt', '')
     generation_params = {
         'temperature': data.get('temperature'),
         'max_tokens': data.get('max_tokens'),
@@ -372,35 +353,29 @@ def ask_route():
 
     return app.response_class(generate(), mimetype='text/plain')
 
+# CORRECTED: Restored the proper main execution block for dual CLI/server mode.
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="AI Model Server")
-    parser.add_argument('-q', '--question', type=str, help="Question to ask the AI model")
-    parser.add_argument('-s', '--system_prompt', type=str, help="System prompt for the AI model")
-    parser.add_argument('-t', '--temperature', type=float, help="Sampling temperature")
-    parser.add_argument('--top_k', type=int, help="Top-k sampling")
-    parser.add_argument('--top_p', type=float, help="Top-p (nucleus) sampling")
-    parser.add_argument('--repeat_penalty', type=float, help="Repeat penalty")
-    parser.add_argument('--mirostat_mode', type=int, help="Mirostat mode")
-    parser.add_argument('--mirostat_tau', type=float, help="Mirostat tau")
-    parser.add_argument('--mirostat_eta', type=float, help="Mirostat eta")
+    parser = argparse.ArgumentParser(description="Run AI model as a web server or a single-shot command.")
+    parser.add_argument('-q', '--question', type=str, help='Question to ask the model in CLI mode.')
+    parser.add_argument('-s', '--system_prompt', type=str, default=None, help='System prompt to use, overriding the default.')
+    
+    # Add other generation params for CLI
+    parser.add_argument('-t', '--temperature', type=float, default=None)
+    parser.add_argument('--top_k', type=int, default=None)
+    parser.add_argument('--top_p', type=float, default=None)
+    parser.add_argument('--repeat_penalty', type=float, default=None)
+    parser.add_argument('--max_tokens', type=int, default=None)
+    parser.add_argument('--mirostat_mode', type=int, default=None)
+    parser.add_argument('--mirostat_tau', type=float, default=None)
+    parser.add_argument('--mirostat_eta', type=float, default=None)
+
     args = parser.parse_args()
 
-    # If a question is provided as a command-line argument, bypass the web server and answer directly
+    # If --question is passed, run in CLI mode
     if args.question:
-        logging.info("--> Direct Question: " + args.question)
-        system_prompt_override = args.system_prompt if args.system_prompt else ai_model.default_system_prompt
-        generation_params = {
-            'temperature': args.temperature,
-            'max_tokens': args.max_tokens,
-            'top_k': args.top_k,
-            'top_p': args.top_p,
-            'repeat_penalty': args.repeat_penalty,
-            'mirostat_mode': args.mirostat_mode,
-            'mirostat_tau': args.mirostat_tau,
-            'mirostat_eta': args.mirostat_eta,
-        }
-        # Filter out None values
-        generation_params = {k: v for k, v in generation_params.items() if v is not None}
+        system_prompt_override = args.system_prompt
+        
+        generation_params = {k: v for k, v in vars(args).items() if v is not None and k not in ['question', 'system_prompt']}
 
         for chunk in ai_model.ask(args.question, system_prompt_override, generation_params):
             print(chunk, end='', flush=True)
