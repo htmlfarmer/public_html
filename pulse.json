@@ -1,0 +1,180 @@
+{
+    "meta": {
+        "updated": "2025-11-26 18:18:49",
+        "status": "Online"
+    },
+    "feed": [
+        {
+            "source": "BBC News",
+            "url": "https://www.bbc.com/news",
+            "headlines": [
+                {
+                    "title": "Millions to pay more in tax as Reeves says Budget is tackling cost of living",
+                    "link": "https://www.bbc.com/news/articles/c246npmq1n4o?at_medium=RSS&at_campaign=rss",
+                    "image": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/e55c/live/f7e80f90-cafe-11f0-a892-01d657345866.jpg"
+                },
+                {
+                    "title": "Faisal Islam: The real reason Reeves is making you pay more tax",
+                    "link": "https://www.bbc.com/news/articles/cyvg3en12r1o?at_medium=RSS&at_campaign=rss",
+                    "image": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/b138/live/38681fd0-cafd-11f0-a892-01d657345866.jpg"
+                },
+                {
+                    "title": "Nine ways the Budget could affect you if you're under 25",
+                    "link": "https://www.bbc.com/news/articles/cn4dxmg7jyjo?at_medium=RSS&at_campaign=rss",
+                    "image": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/46f7/live/e55c7e80-cade-11f0-995e-fb191683181c.jpg"
+                },
+                {
+                    "title": "'I am devastated': Hong Kong residents in disbelief after fire destroys blocks of flats",
+                    "link": "https://www.bbc.com/news/articles/cvgjnlx1g6yo?at_medium=RSS&at_campaign=rss",
+                    "image": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/57a5/live/b7641ed0-caec-11f0-8c06-f5d460985095.png"
+                },
+                {
+                    "title": "Two National Guard members in critical condition after shooting near White House",
+                    "link": "https://www.bbc.com/news/articles/c3r7qpqddnro?at_medium=RSS&at_campaign=rss",
+                    "image": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/51a4/live/74146670-cb33-11f0-8c06-f5d460985095.jpg"
+                },
+                {
+                    "title": "The 'nice' neighbour behind Liverpool parade carnage",
+                    "link": "https://www.bbc.com/news/articles/czxpdrvxx4ko?at_medium=RSS&at_campaign=rss",
+                    "image": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/ea01/live/782422f0-cade-11f0-9e07-03807f90fdcf.jpg"
+                }
+            ],
+            "lat": 51.5074,
+            "lon": -0.1278,
+            "country": "GB"
+        },
+        {
+            "source": "The New York Times",
+            "url": "https://www.nytimes.com",
+            "headlines": [
+                {
+                    "title": "Trump Orders 500 More National Guard Troops to D.C. After Shooting",
+                    "link": "https://www.nytimes.com/2025/11/26/us/politics/trump-national-guard-dc-shooting.html",
+                    "image": "https://static01.nyt.com/images/2025/11/26/multimedia/26dc-trump-guard/26dc-trump-guard-mediumSquareAt3X-v2.jpg"
+                },
+                {
+                    "title": "For Spouses of U.S. Citizens, Green Card Interviews End in Handcuffs",
+                    "link": "https://www.nytimes.com/2025/11/26/us/trump-green-card-interview-arrests.html",
+                    "image": "https://static01.nyt.com/images/2025/11/26/multimedia/26nat-immig-spouses-stephen-jfvm/26nat-immig-spouses-stephen-jfvm-mediumSquareAt3X.jpg"
+                },
+                {
+                    "title": "Colorado Judge Tells Immigration Agents to Stop Arrests Without Warrants",
+                    "link": "https://www.nytimes.com/2025/11/26/us/politics/colorado-immigration-ruling.html",
+                    "image": "https://static01.nyt.com/images/2025/11/26/multimedia/26nat-colorado-ice-1-kqbz/26nat-colorado-ice-1-kqbz-mediumSquareAt3X.jpg"
+                },
+                {
+                    "title": "ICE Detains Mother of White House Press Secretary Karoline Leavitt\u2019s Nephew",
+                    "link": "https://www.nytimes.com/2025/11/26/us/karoline-leavitt-ice-family-member-bruna-ferreira.html",
+                    "image": "https://static01.nyt.com/images/2025/11/26/multimedia/26xp-ice-zwgl/26xp-ice-zwgl-mediumSquareAt3X.jpg"
+                },
+                {
+                    "title": "U.S. to Press Europe and Other Allies on Immigration, Document Says",
+                    "link": "https://www.nytimes.com/2025/11/26/us/politics/trump-rubio-mass-migration.html",
+                    "image": null
+                },
+                {
+                    "title": "\u2018In Triage Every Day\u2019: A Beleaguered Speaker Says He\u2019s Overwhelmed",
+                    "link": "https://www.nytimes.com/2025/11/26/us/politics/speaker-mike-johnson-beleagured.html",
+                    "image": "https://static01.nyt.com/images/2025/11/26/multimedia/26dc-johnson-kjcf/26dc-johnson-kjcf-mediumSquareAt3X.jpg"
+                }
+            ],
+            "lat": 40.7128,
+            "lon": -74.006,
+            "country": "US"
+        },
+        {
+            "source": "Al Jazeera English",
+            "url": "https://www.aljazeera.com",
+            "headlines": [
+                {
+                    "title": "Thailand\u2019s pork industry fears influx of cheap US imports under Trump",
+                    "link": "https://www.aljazeera.com/economy/2025/11/26/thailands-pork-industry-fears-influx-of-cheap-us-imports-under-trump?traffic_source=rss",
+                    "image": "https://www.aljazeera.com/wp-content/uploads/2025/11/GettyImages-1363438394-1-1764141398.jpg?resize=1920%2C1440"
+                },
+                {
+                    "title": "Canada announces new support for lumber, steel industries hit by tariffs",
+                    "link": "https://www.aljazeera.com/economy/2025/11/26/canada-announces-new-support-for-lumber-steel-industries-hit-by-tariffs?traffic_source=rss",
+                    "image": "https://www.aljazeera.com/wp-content/uploads/2025/11/2025-11-23T081216Z_1350076382_RC282IAILOSF_RTRMADP_3_G20-SUMMIT-1764193107.jpg?resize=1920%2C1440"
+                },
+                {
+                    "title": "PSV trounce Liverpool as Arsenal topple Bayern while PSG and Real also win",
+                    "link": "https://www.aljazeera.com/sports/2025/11/26/psv-trounce-liverpool-as-arsenal-topple-bayern-while-psg-and-real-also-win?traffic_source=rss",
+                    "image": "https://www.aljazeera.com/wp-content/uploads/2025/11/2025-11-26T221833Z_348653628_UP1ELBQ1P26VD_RTRMADP_3_SOCCER-CHAMPIONS-LIV-PSV-1764196159.jpg?resize=1920%2C1423"
+                },
+                {
+                    "title": "Trump yanks G20 invitation from South Africa over false genocide claims",
+                    "link": "https://www.aljazeera.com/news/2025/11/26/trump-yanks-g20-invitation-from-south-africa-over-false-genocide-claims?traffic_source=rss",
+                    "image": "https://www.aljazeera.com/wp-content/uploads/2025/11/AP25330049418771-1764195200.jpg?resize=1920%2C1440"
+                },
+                {
+                    "title": "Washington DC shooting live: 2 National Guard troops hurt, suspect detained",
+                    "link": "https://www.aljazeera.com/news/liveblog/2025/11/26/live-two-us-national-guard-members-shot-killed-near-white-house?traffic_source=rss",
+                    "image": "https://www.aljazeera.com/wp-content/uploads/2025/11/2025-11-26T215647Z_786123836_RC2K4IAWWMIP_RTRMADP_3_USA-SHOOTING-1764198471.jpg?resize=1920%2C1440"
+                },
+                {
+                    "title": "Emergency teams move hastily buried Palestinians to cemeteries",
+                    "link": "https://www.aljazeera.com/video/newsfeed/2025/11/26/emergency-teams-move-hastily-buried-palestinians-to-cemeteries?traffic_source=rss",
+                    "image": "https://www.aljazeera.com/wp-content/uploads/2025/11/image-1764190687.jpg?resize=1920%2C1080&quality=80"
+                }
+            ],
+            "lat": 25.2854,
+            "lon": 51.531,
+            "country": "QA"
+        },
+        {
+            "source": "Le Monde",
+            "url": "https://www.lemonde.fr",
+            "headlines": [
+                {
+                    "title": "O\u00f9 en sont les mesures embl\u00e9matiques du budget de la \u00ab\u00a0S\u00e9cu\u00a0\u00bb apr\u00e8s l\u2019examen au S\u00e9nat\u00a0?",
+                    "link": "https://www.lemonde.fr/les-decodeurs/article/2025/11/26/reforme-des-retraites-conge-de-naissance-annee-blanche-ou-en-est-on-des-mesures-emblematiques-du-budget-de-la-secu_6654973_4355770.html",
+                    "image": "https://img.lemde.fr/2025/11/26/108/0/8256/4128/644/322/60/0/63c0d32_ftp-import-images-1-umeczlvucots-5532338-01-06.jpg"
+                },
+                {
+                    "title": "Affaire Bygmalion\u00a0: Nicolas Sarkozy condamn\u00e9 d\u00e9finitivement pour la deuxi\u00e8me fois, cette fois pour le \u00ab\u00a0financement ill\u00e9gal\u00a0\u00bb de sa campagne de 2012",
+                    "link": "https://www.lemonde.fr/societe/article/2025/11/26/affaire-bygmalion-nicolas-sarkozy-definitivement-condamne-pour-le-financement-illegal-de-sa-campagne-de-2012_6654963_3224.html",
+                    "image": "https://img.lemde.fr/2025/11/24/267/0/7359/3679/644/322/60/0/dd953a8_ftp-import-images-1-choh9agupskn-5514428-01-06.jpg"
+                },
+                {
+                    "title": "A Washington, deux membres de la garde nationale touch\u00e9s par des tirs dans un \u00e9tat critique, l\u2019administration Trump annonce le d\u00e9ploiement de 500\u00a0militaires suppl\u00e9mentaires",
+                    "link": "https://www.lemonde.fr/international/article/2025/11/26/contrairement-a-ce-qu-avait-annonce-le-gouverneur-de-virginie-occidentale-les-militaires-touches-par-des-tirs-a-washington-ne-sont-pas-morts_6654988_3211.html",
+                    "image": "https://img.lemde.fr/2025/11/26/720/0/8640/4320/644/322/60/0/42c30be_ftp-import-images-1-1xywpyl4frf0-a908d399caac46cea44b3db2764d1af7-0-7dc476ee504741b0b3b022cee525b419.jpg"
+                },
+                {
+                    "title": "Incendie \u00e0 Hongkong\u00a0: au moins 44 morts et des centaines de disparus dans le complexe r\u00e9sidentiel Wang Fuk Court",
+                    "link": "https://www.lemonde.fr/international/article/2025/11/26/incendie-a-hongkong-au-moins-36-morts-et-279-personnes-portees-disparues-dans-le-complexe-residentiel-wang-fuk-court_6654937_3211.html",
+                    "image": "https://img.lemde.fr/2025/11/26/1292/0/8192/4096/644/322/60/0/81b17d3_ftp-import-images-1-qdha7jjtt7cj-2025-11-26t102909z-1264531692-rc294iam51vj-rtrmadp-3-hongkong-fire.JPG"
+                },
+                {
+                    "title": "Dans les m\u00e9tros, RER et tramways d\u2019Ile-de-France \u00ab\u00a0travaux importants\u00a0\u00bb et grandes perturbations pr\u00e9vues en\u00a02026",
+                    "link": "https://www.lemonde.fr/economie/article/2025/11/26/metro-rer-tramway-des-travaux-de-renovation-importants-dans-les-transports-franciliens-provoqueront-des-perturbations-toute-l-annee-2026_6654985_3234.html",
+                    "image": "https://img.lemde.fr/2025/11/26/296/0/8256/4128/644/322/60/0/03788fc_upload-1-nrbazxcrbcyu-000-74wm9n6.jpg"
+                },
+                {
+                    "title": "PSG-Tottenham\u00a0: le r\u00e9sum\u00e9 de la victoire prolifique des Parisiens lors de la 5\u1d49 journ\u00e9e de la Ligue des champions",
+                    "link": "https://www.lemonde.fr/sport/article/2025/11/26/psg-tottenham-le-resume-de-la-victoire-prolifique-des-parisiens-lors-de-la-5-journee-de-la-ligue-des-champions_6654994_3242.html",
+                    "image": "https://img.lemde.fr/2025/11/26/113/0/4890/2445/644/322/60/0/ec6f127_ftp-import-images-1-cad2vnrj3bfo-2025-11-26t220530z-1346821838-up1elbq1pd5wm-rtrmadp-3-soccer-champions-psg-tot.JPG"
+                }
+            ],
+            "lat": 48.8566,
+            "lon": 2.3522,
+            "country": "FR"
+        },
+        {
+            "source": "Times of India",
+            "url": "https://timesofindia.indiatimes.com",
+            "headlines": [],
+            "lat": 19.076,
+            "lon": 72.8777,
+            "country": "IN"
+        },
+        {
+            "source": "NHK World-Japan",
+            "url": "https://www3.nhk.or.jp/nhkworld/en/news",
+            "headlines": [],
+            "lat": 35.6895,
+            "lon": 139.6917,
+            "country": "JP"
+        }
+    ]
+}

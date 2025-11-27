@@ -1,0 +1,50 @@
+[
+    {
+        "name": "BBC News",
+        "url": "https://www.bbc.com/news",
+        "rss": "http://feeds.bbci.co.uk/news/rss.xml",
+        "lat": 51.5074,
+        "lon": -0.1278,
+        "country": "GB"
+    },
+    {
+        "name": "The New York Times",
+        "url": "https://www.nytimes.com",
+        "rss": "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
+        "lat": 40.7128,
+        "lon": -74.0060,
+        "country": "US"
+    },
+    {
+        "name": "Al Jazeera English",
+        "url": "https://www.aljazeera.com",
+        "rss": "https://www.aljazeera.com/xml/rss/all.xml",
+        "lat": 25.2854,
+        "lon": 51.5310,
+        "country": "QA"
+    },
+    {
+        "name": "Le Monde",
+        "url": "https://www.lemonde.fr",
+        "rss": "https://www.lemonde.fr/rss/une.xml",
+        "lat": 48.8566,
+        "lon": 2.3522,
+        "country": "FR"
+    },
+    {
+        "name": "Times of India",
+        "url": "https://timesofindia.indiatimes.com",
+        "rss": "https://timesofindia.indiatimes.com/rssfeedsdefault.cms",
+        "lat": 19.0760,
+        "lon": 72.8777,
+        "country": "IN"
+    },
+    {
+        "name": "NHK World-Japan",
+        "url": "https://www3.nhk.or.jp/nhkworld/en/news",
+        "rss": "https://www3.nhk.or.jp/nhkworld/en/news/rss.xml",
+        "lat": 35.6895,
+        "lon": 139.6917,
+        "country": "JP"
+    }
+]

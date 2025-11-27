@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASHY PULSE - Earthquakes</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" crossorigin="" />
+    <style>
+        :root { --neon: #00f3ff; --alert: #ff4757; --bg: #0a0a0a; --panel: #141414; }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: #ccc;
+            font-family: 'Segoe UI', monospace;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        .info-panel {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: var(--panel);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #333;
+        }
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+            color: #ccc;
+        }
+        .filters button {
+            padding: 6px;
+            border: 1px solid #222;
+            background: #0a0a0a;
+            color: #ccc;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+    <div class="info-panel">
+        <span class="close-btn">&times;</span>
+        <div style="font-size:0.9em; color:#bbb; margin-bottom:8px;">Base layers:</div>
+        <div class="filters" style="display:flex; gap:8px; margin-bottom:8px;">
+            <button id="btn-sat">Satellite (Esri)</button>
+            <button id="btn-nasa">Satellite (NASA)</button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script>
+        const JSON_URL = 'pulse.json';
+
+        // Map and source control state
+        let map, quakeMarkers = [], baseLayers = {}, currentBaseLayer;
+
+        async function fetchPulse() {
+            try {
+                // Add timestamp to prevent browser caching (?t=...)
+                const response = await fetch(`${JSON_URL}?t=${new Date().getTime()}`);
+                if (!response.ok) throw new Error("Data stream offline");
+                
+                const data = await response.json();
+                renderPulse(data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function renderPulse(data) {
+
+            // Init map (only once)
+            if (!map) {
+                try {
+                    map = L.map('map', { worldCopyJump: true }).setView([20, 0], 2);
+                    
+                    const twoDaysAgo = new Date();
+                    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+                    const nasaDate = twoDaysAgo.toISOString().split('T')[0];
+
+                    baseLayers.sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri' });
+                    
+                    baseLayers.nasa = L.tileLayer(`https://map1.vis.earthdata.nasa.gov/wmts-webmerc/VIIRS_SNPP_CorrectedReflectance_TrueColor/default/${nasaDate}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`, {
+                        attribution: '&copy; NASA Worldview',
+                        maxNativeZoom: 9
+                    });
+
+                    baseLayers.sat.addTo(map);
+                    currentBaseLayer = 'sat';
+
+                    document.getElementById('btn-sat').onclick = () => {
+                        if (currentBaseLayer !== 'sat') {
+                            map.removeLayer(baseLayers.nasa);
+                            baseLayers.sat.addTo(map);
+                            currentBaseLayer = 'sat';
+                        }
+                    };
+                    document.getElementById('btn-nasa').onclick = () => {
+                        if (currentBaseLayer !== 'nasa') {
+                            map.removeLayer(baseLayers.sat);
+                            baseLayers.nasa.addTo(map);
+                            currentBaseLayer = 'nasa';
+                        }
+                    };
+
+                    document.querySelector('.close-btn').onclick = () => {
+                        document.querySelector('.info-panel').style.display = 'none';
+                    };
+
+                } catch (e) {
+                    console.warn('Leaflet init failed', e);
+                }
+            }
+
+            // Remove previous quake markers
+            quakeMarkers.forEach(marker => {
+                try {
+                    map.removeLayer(marker);
+                } catch (e) {
+                    // Ignore errors if marker is already removed
+                }
+            });
+            quakeMarkers = [];
+
+
+            // Add earthquake markers if present
+            if (data.earthquakes && map) {
+                data.earthquakes.forEach(ev => {
+
+                    const now = new Date().getTime();
+                    const twentyFourHoursAgo = now - (24 * 60 * 60 * 1000);
+                    const isRecent = ev.time_ms > twentyFourHoursAgo;
+
+                    // Drawable size and color by magnitude
+                    const mag = ev.mag || 0;
+                    const radius = Math.max(6, (mag || 0) * 4 + 6);
+                    const color = isRecent ? '#ff3300' : mag >= 4 ? '#ff8a00' : mag >= 2 ? '#ffd100' : '#7cffb2';
+
+                    const circle = L.circleMarker([ev.lat, ev.lon], { radius, color, fillColor: color, fillOpacity: 0.7, weight: 1 });
+                    
+                    let placeName = ev.place || '';
+                    if (placeName.includes(' of ')) {
+                        placeName = placeName.split(' of ')[1];
+                    }
+                    const wikiUrl = `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(placeName)}`;
+
+                    let popup = `<div style='min-width:260px'><strong>M${ev.mag} — ${ev.place || ''}</strong><div style='font-size:0.85em;color:#ddd;margin-top:6px'>${ev.time_iso ? ev.time_iso : ''}</div><div style='margin-top:8px'><a href='${ev.url}' target='_blank' style='color:#9fdfff'>USGS Event</a> | <a href='${wikiUrl}' target='_blank' style='color:#9fdfff'>Wikipedia</a></div>`;
+                    popup += '</div>';
+
+                    circle.bindPopup(popup).addTo(map);
+                    quakeMarkers.push(circle);
+                });
+            }
+        }
+
+        // Initial Load
+        fetchPulse();
+
+        // Auto-refresh the frontend every 5 minutes (without reloading page)
+        setInterval(fetchPulse, 300000);
+    </script>
+
+</body>
+</html>

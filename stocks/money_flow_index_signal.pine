@@ -1,0 +1,42 @@
+//@version=6
+indicator(title="Money Flow Index + Signal + Dots", shorttitle="MFI-S", format=format.price, precision=2, timeframe="", timeframe_gaps=true)
+
+// --- Inputs ---
+length = input.int(title="MFI Length", defval=14, minval=1, maxval=2000)
+signalLength = input.int(title="Signal Length", defval=9, minval=1, maxval=2000)
+useEma = input.bool(title="Use EMA for Signal?", defval=false)
+
+// --- Calculations ---
+src = hlc3
+mf = ta.mfi(src, length)
+
+// Calculate the 'Yellow Line' (Signal)
+mf_signal = useEma ? ta.ema(mf, signalLength) : ta.sma(mf, signalLength)
+
+// --- Plotting Lines ---
+plot(mf, "MF", color=#7E57C2, linewidth=2)
+plot(mf_signal, "Signal Line", color=color.yellow, linewidth=2)
+
+// --- Crossover Logic (The MACD Concept) ---
+buySignal = ta.crossover(mf, mf_signal)
+sellSignal = ta.crossunder(mf, mf_signal)
+
+// --- Plotting Dots ---
+// Green dot when MFI crosses OVER Signal (Bullish)
+plotshape(buySignal ? mf : na, title="Buy Signal", style=shape.circle, location=location.absolute, color=color.green, size=size.tiny)
+
+// Red dot when MFI crosses UNDER Signal (Bearish)
+plotshape(sellSignal ? mf : na, title="Sell Signal", style=shape.circle, location=location.absolute, color=color.red, size=size.tiny)
+
+// --- Background Logic ---
+// Define the color: Green if MFI > Signal, Red if MFI < Signal. 
+// Using 90 transparency to keep it subtle.
+dynamicColor = mf > mf_signal ? color.new(color.green, 90) : color.new(color.red, 90)
+
+// --- Background/Levels ---
+overbought = hline(80, title="Overbought", color=#787B86)
+hline(50, "Middle Band", color=color.new(#787B86, 50))
+oversold = hline(20, title="Oversold", color=#787B86)
+
+// Fill using the dynamic color
+fill(overbought, oversold, color=dynamicColor, title="Background")

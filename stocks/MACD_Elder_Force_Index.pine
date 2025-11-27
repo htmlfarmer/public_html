@@ -1,0 +1,76 @@
+//@version=5
+indicator("MACD + Elder Force Index", overlay=false)
+
+// --- INPUTS ---
+// Group: Calculation Settings
+fastLength      = input.int(12, "MACD Fast Length", group="Calculations")
+slowLength      = input.int(26, "MACD Slow Length", group="Calculations")
+signalLength    = input.int(9, "MACD Signal Length", group="Calculations")
+src             = input.source(close, "MACD Source", group="Calculations")
+efiLength       = input.int(13, "EFI EMA Length", group="Calculations")
+
+// Group: Display Settings
+showTriangles   = input.bool(true, "Show Crossover Triangles", group="Display")
+showDots        = input.bool(false, "Show Inflection Dots", group="Display")
+// CHANGED: Added toggle for EFI, set to false by default
+showEFI         = input.bool(false, "Show Elder Force Index (EFI)", group="Display")
+
+// --- MACD CALCULATION ---
+fastMA      = ta.ema(src, fastLength)
+slowMA      = ta.ema(src, slowLength)
+macdLine    = fastMA - slowMA
+signalLine  = ta.ema(macdLine, signalLength)
+macdHist    = macdLine - signalLine
+
+// --- ELDER FORCE INDEX CALCULATION ---
+efiRaw      = (close - close[1]) * volume
+efi         = ta.ema(efiRaw, efiLength)
+
+// --- NORMALIZATION ---
+efiNorm     = efi / ta.sma(volume, efiLength)
+
+// --- PLOTTING INDICATORS ---
+plot(macdLine, "MACD Line", color=color.blue, linewidth=2)
+plot(signalLine, "Signal Line", color=color.yellow, linewidth=2)
+
+// --- HISTOGRAM COLORS ---
+// 1. Above 0 and Growing (Strong Bullish) -> Bright Green
+// 2. Above 0 and Shrinking (Weakening Bullish) -> Light Green
+// 3. Below 0 and Growing downwards (Strong Bearish) -> Bright Red
+// 4. Below 0 and Shrinking upwards (Weakening Bearish) -> Light Red
+colHist = if macdHist >= 0
+    macdHist > macdHist[1] ? color.new(color.green, 10) : color.new(color.green, 60)
+else
+    macdHist < macdHist[1] ? color.new(color.red, 10) : color.new(color.red, 60)
+
+plot(macdHist, "MACD Histogram", style=plot.style_columns, color=colHist)
+
+// EFI Plot (White)
+// CHANGED: Only plots if showEFI is true (Default: OFF)
+plot(showEFI ? efiNorm : na, "Normalized EFI", color=color.white, linewidth=2)
+
+hline(0, "Zero Line", color=color.gray)
+
+// --- SIGNALS ---
+
+// 1. Main Crossovers (Triangles)
+buySignal  = ta.crossover(macdLine, signalLine)
+sellSignal = ta.crossunder(macdLine, signalLine)
+
+// Only plot if showTriangles is true (Default: ON)
+plotshape(showTriangles and buySignal ? macdLine : na, title="Buy Triangle", style=shape.triangleup, location=location.absolute, color=color.green, size=size.small)
+plotshape(showTriangles and sellSignal ? macdLine : na, title="Sell Triangle", style=shape.triangledown, location=location.absolute, color=color.red, size=size.small)
+
+// 2. Inflection Points (Dots)
+// Detects when the Histogram momentum flips direction
+momentumTurnUp   = macdHist > macdHist[1] and macdHist[1] <= macdHist[2]
+momentumTurnDown = macdHist < macdHist[1] and macdHist[1] >= macdHist[2]
+
+// Only plot if showDots is true (Default: OFF)
+plotshape(showDots and momentumTurnUp ? macdLine : na, title="Momentum Buy Dot", style=shape.circle, location=location.absolute, color=color.green, size=size.tiny)
+plotshape(showDots and momentumTurnDown ? macdLine : na, title="Momentum Sell Dot", style=shape.circle, location=location.absolute, color=color.red, size=size.tiny)
+
+// --- BACKGROUND COLOR LOGIC ---
+isBullish = macdLine > signalLine
+bgCol = isBullish ? color.new(color.green, 90) : color.new(color.red, 90)
+bgcolor(bgCol, title="Trend Background")
