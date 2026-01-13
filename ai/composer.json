@@ -1,0 +1,10 @@
+{
+  "name": "local/openai-php-interface",
+  "description": "Minimal local PHP interface to call OpenAI API",
+  "require": {
+    "php": ">=7.4"
+  },
+  "autoload": {
+    "psr-4": { "": "src/" }
+  }
+}
