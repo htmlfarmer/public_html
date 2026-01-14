@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_ab41a5218cbbe8565cb7a7c6dfee7659 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_ab41a5218cbbe8565cb7a7c6dfee7659" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_ab41a5218cbbe8565cb7a7c6dfee7659 = L.map(
+                "map_ab41a5218cbbe8565cb7a7c6dfee7659",
+                {
+                    center: [47.6063167, -122.33351494374999],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 10,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_8df0d01c6e203dbb48a71674d0d6702f = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_8df0d01c6e203dbb48a71674d0d6702f.addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+    var color_map_1c91032a33172970e47b94370cfbba4d = {};
+
+    
+    color_map_1c91032a33172970e47b94370cfbba4d.color = d3.scale.threshold()
+              .domain([63621.0, 63830.44088176353, 64039.88176352705, 64249.32264529058, 64458.76352705411, 64668.20440881763, 64877.64529058116, 65087.08617234469, 65296.52705410821, 65505.96793587174, 65715.40881763527, 65924.8496993988, 66134.29058116232, 66343.73146292585, 66553.17234468937, 66762.6132264529, 66972.05410821643, 67181.49498997995, 67390.93587174348, 67600.37675350701, 67809.81763527053, 68019.25851703406, 68228.69939879759, 68438.14028056113, 68647.58116232466, 68857.02204408818, 69066.46292585171, 69275.90380761524, 69485.34468937876, 69694.78557114229, 69904.22645290582, 70113.66733466934, 70323.10821643287, 70532.5490981964, 70741.98997995992, 70951.43086172345, 71160.87174348698, 71370.3126252505, 71579.75350701403, 71789.19438877756, 71998.63527054108, 72208.07615230461, 72417.51703406814, 72626.95791583166, 72836.39879759519, 73045.83967935872, 73255.28056112224, 73464.72144288577, 73674.1623246493, 73883.60320641282, 74093.04408817635, 74302.48496993988, 74511.9258517034, 74721.36673346693, 74930.80761523046, 75140.24849699398, 75349.68937875751, 75559.13026052104, 75768.57114228456, 75978.01202404809, 76187.45290581163, 76396.89378757516, 76606.33466933868, 76815.77555110221, 77025.21643286574, 77234.65731462926, 77444.09819639279, 77653.53907815632, 77862.97995991984, 78072.42084168337, 78281.8617234469, 78491.30260521043, 78700.74348697395, 78910.18436873748, 79119.625250501, 79329.06613226453, 79538.50701402806, 79747.94789579159, 79957.38877755511, 80166.82965931864, 80376.27054108217, 80585.71142284569, 80795.15230460922, 81004.59318637275, 81214.03406813627, 81423.4749498998, 81632.91583166333, 81842.35671342685, 82051.79759519038, 82261.2384769539, 82470.67935871743, 82680.12024048096, 82889.56112224449, 83099.00200400801, 83308.44288577154, 83517.88376753507, 83727.32464929859, 83936.76553106212, 84146.20641282565, 84355.64729458917, 84565.0881763527, 84774.52905811623, 84983.96993987975, 85193.41082164328, 85402.8517034068, 85612.29258517033, 85821.73346693386, 86031.17434869739, 86240.61523046091, 86450.05611222444, 86659.49699398798, 86868.93787575151, 87078.37875751503, 87287.81963927856, 87497.26052104209, 87706.70140280561, 87916.14228456914, 88125.58316633267, 88335.0240480962, 88544.46492985972, 88753.90581162325, 88963.34669338677, 89172.7875751503, 89382.22845691383, 89591.66933867735, 89801.11022044088, 90010.55110220441, 90219.99198396794, 90429.43286573146, 90638.87374749499, 90848.31462925852, 91057.75551102204, 91267.19639278557, 91476.6372745491, 91686.07815631262, 91895.51903807615, 92104.95991983968, 92314.4008016032, 92523.84168336673, 92733.28256513026, 92942.72344689378, 93152.16432865732, 93361.60521042085, 93571.04609218438, 93780.4869739479, 93989.92785571143, 94199.36873747496, 94408.80961923848, 94618.25050100201, 94827.69138276554, 95037.13226452906, 95246.57314629259, 95456.01402805612, 95665.45490981964, 95874.89579158317, 96084.3366733467, 96293.77755511022, 96503.21843687375, 96712.65931863728, 96922.1002004008, 97131.54108216433, 97340.98196392786, 97550.42284569138, 97759.86372745491, 97969.30460921844, 98178.74549098196, 98388.18637274549, 98597.62725450902, 98807.06813627254, 99016.50901803607, 99225.9498997996, 99435.39078156312, 99644.83166332665, 99854.27254509018, 100063.7134268537, 100273.15430861723, 100482.59519038076, 100692.03607214428, 100901.47695390781, 101110.91783567134, 101320.35871743486, 101529.79959919839, 101739.24048096192, 101948.68136272545, 102158.12224448897, 102367.5631262525, 102577.00400801603, 102786.44488977955, 102995.88577154308, 103205.3266533066, 103414.76753507013, 103624.20841683366, 103833.64929859719, 104043.09018036071, 104252.53106212424, 104461.97194388777, 104671.41282565129, 104880.85370741482, 105090.29458917836, 105299.73547094189, 105509.17635270541, 105718.61723446894, 105928.05811623247, 106137.498997996, 106346.93987975952, 106556.38076152305, 106765.82164328657, 106975.2625250501, 107184.70340681363, 107394.14428857715, 107603.58517034068, 107813.02605210421, 108022.46693386773, 108231.90781563126, 108441.34869739479, 108650.78957915831, 108860.23046092184, 109069.67134268537, 109279.1122244489, 109488.55310621244, 109697.99398797596, 109907.43486973949, 110116.87575150302, 110326.31663326654, 110535.75751503007, 110745.1983967936, 110954.63927855712, 111164.08016032065, 111373.52104208418, 111582.9619238477, 111792.40280561123, 112001.84368737476, 112211.28456913828, 112420.72545090181, 112630.16633266534, 112839.60721442886, 113049.04809619239, 113258.48897795592, 113467.92985971944, 113677.37074148297, 113886.8116232465, 114096.25250501002, 114305.69338677355, 114515.13426853708, 114724.5751503006, 114934.01603206413, 115143.45691382766, 115352.89779559118, 115562.33867735471, 115771.77955911824, 115981.22044088176, 116190.66132264529, 116400.10220440882, 116609.54308617234, 116818.98396793587, 117028.4248496994, 117237.86573146292, 117447.30661322645, 117656.74749498998, 117866.1883767535, 118075.62925851703, 118285.07014028056, 118494.51102204408, 118703.95190380761, 118913.39278557114, 119122.83366733466, 119332.27454909819, 119541.71543086172, 119751.15631262524, 119960.59719438877, 120170.0380761523, 120379.47895791582, 120588.91983967935, 120798.36072144288, 121007.8016032064, 121217.24248496993, 121426.68336673346, 121636.12424849698, 121845.56513026051, 122055.00601202404, 122264.44689378756, 122473.8877755511, 122683.32865731463, 122892.76953907816, 123102.21042084169, 123311.65130260521, 123521.09218436874, 123730.53306613227, 123939.97394789579, 124149.41482965932, 124358.85571142285, 124568.29659318637, 124777.7374749499, 124987.17835671343, 125196.61923847695, 125406.06012024048, 125615.501002004, 125824.94188376753, 126034.38276553106, 126243.82364729459, 126453.26452905811, 126662.70541082164, 126872.14629258518, 127081.58717434871, 127291.02805611223, 127500.46893787576, 127709.90981963929, 127919.35070140281, 128128.79158316634, 128338.23246492987, 128547.6733466934, 128757.11422845692, 128966.55511022045, 129175.99599198397, 129385.4368737475, 129594.87775551103, 129804.31863727455, 130013.75951903808, 130223.20040080161, 130432.64128256514, 130642.08216432866, 130851.52304609219, 131060.96392785572, 131270.40480961924, 131479.84569138277, 131689.2865731463, 131898.72745490982, 132108.16833667335, 132317.60921843688, 132527.0501002004, 132736.49098196393, 132945.93186372746, 133155.37274549098, 133364.8136272545, 133574.25450901804, 133783.69539078156, 133993.1362725451, 134202.57715430862, 134412.01803607214, 134621.45891783567, 134830.8997995992, 135040.34068136272, 135249.78156312625, 135459.22244488978, 135668.6633266533, 135878.10420841683, 136087.54509018036, 136296.98597194388, 136506.4268537074, 136715.86773547094, 136925.30861723446, 137134.749498998, 137344.19038076152, 137553.63126252504, 137763.07214428857, 137972.5130260521, 138181.95390781562, 138391.39478957915, 138600.83567134268, 138810.2765531062, 139019.71743486973, 139229.15831663326, 139438.59919839678, 139648.0400801603, 139857.48096192384, 140066.92184368736, 140276.3627254509, 140485.80360721442, 140695.24448897794, 140904.68537074147, 141114.126252505, 141323.56713426852, 141533.00801603205, 141742.44889779558, 141951.8897795591, 142161.33066132263, 142370.77154308616, 142580.21242484968, 142789.6533066132, 142999.09418837674, 143208.53507014026, 143417.9759519038, 143627.41683366732, 143836.85771543084, 144046.29859719437, 144255.7394789579, 144465.18036072142, 144674.62124248495, 144884.06212424848, 145093.503006012, 145302.94388777553, 145512.38476953906, 145721.82565130258, 145931.2665330661, 146140.70741482964, 146350.14829659316, 146559.58917835672, 146769.03006012025, 146978.47094188377, 147187.9118236473, 147397.35270541083, 147606.79358717435, 147816.23446893788, 148025.6753507014, 148235.11623246493, 148444.55711422846, 148653.997995992, 148863.4388777555, 149072.87975951904, 149282.32064128257, 149491.7615230461, 149701.20240480962, 149910.64328657315, 150120.08416833667, 150329.5250501002, 150538.96593186373, 150748.40681362725, 150957.84769539078, 151167.2885771543, 151376.72945891783, 151586.17034068136, 151795.6112224449, 152005.05210420841, 152214.49298597194, 152423.93386773547, 152633.374749499, 152842.81563126252, 153052.25651302605, 153261.69739478957, 153471.1382765531, 153680.57915831663, 153890.02004008016, 154099.46092184368, 154308.9018036072, 154518.34268537074, 154727.78356713426, 154937.2244488978, 155146.66533066134, 155356.10621242487, 155565.5470941884, 155774.98797595192, 155984.42885771545, 156193.86973947898, 156403.3106212425, 156612.75150300603, 156822.19238476956, 157031.63326653308, 157241.0741482966, 157450.51503006014, 157659.95591182366, 157869.3967935872, 158078.83767535072, 158288.27855711424, 158497.71943887777, 158707.1603206413, 158916.60120240483, 159126.04208416835, 159335.48296593188, 159544.9238476954, 159754.36472945893, 159963.80561122246, 160173.24649298599, 160382.6873747495, 160592.12825651304, 160801.56913827657, 161011.0100200401, 161220.45090180362, 161429.89178356715, 161639.33266533067, 161848.7735470942, 162058.21442885773, 162267.65531062125, 162477.09619238478, 162686.5370741483, 162895.97795591183, 163105.41883767536, 163314.8597194389, 163524.3006012024, 163733.74148296594, 163943.18236472947, 164152.623246493, 164362.06412825652, 164571.50501002005, 164780.94589178357, 164990.3867735471, 165199.82765531063, 165409.26853707415, 165618.70941883768, 165828.1503006012, 166037.59118236473, 166247.03206412826, 166456.4729458918, 166665.9138276553, 166875.35470941884, 167084.79559118237, 167294.2364729459, 167503.67735470942, 167713.11823647295, 167922.55911823647, 168132.0])
+              .range(['#ffffd9ff', '#ffffd9ff', '#ffffd8ff', '#ffffd7ff', '#feffd7ff', '#feffd6ff', '#feffd5ff', '#fdffd5ff', '#fdffd4ff', '#fdfed4ff', '#fdfed3ff', '#fcfed2ff', '#fcfed2ff', '#fcfed1ff', '#fbfed0ff', '#fbfed0ff', '#fbfecfff', '#fbfeceff', '#fafdceff', '#fafdcdff', '#fafdccff', '#f9fdccff', '#f9fdcbff', '#f9fdcbff', '#f9fdcaff', '#f8fdc9ff', '#f8fdc9ff', '#f8fcc8ff', '#f7fcc7ff', '#f7fcc7ff', '#f7fcc6ff', '#f7fcc5ff', '#f6fcc5ff', '#f6fcc4ff', '#f6fcc3ff', '#f5fcc3ff', '#f5fbc2ff', '#f5fbc2ff', '#f4fbc1ff', '#f4fbc0ff', '#f4fbc0ff', '#f4fbbfff', '#f3fbbeff', '#f3fbbeff', '#f3fbbdff', '#f2fabcff', '#f2fabcff', '#f2fabbff', '#f2fabaff', '#f1fabaff', '#f1fab9ff', '#f1fab9ff', '#f0fab8ff', '#f0fab7ff', '#f0f9b7ff', '#f0f9b6ff', '#eff9b5ff', '#eff9b5ff', '#eff9b4ff', '#eef9b3ff', '#eef9b3ff', '#eef9b2ff', '#eef9b1ff', '#edf8b1ff', '#ecf8b1ff', '#ecf8b1ff', '#ebf8b1ff', '#ebf7b1ff', '#eaf7b1ff', '#e9f7b2ff', '#e9f7b2ff', '#e8f6b2ff', '#e8f6b2ff', '#e7f6b2ff', '#e6f6b2ff', '#e6f5b2ff', '#e5f5b2ff', '#e4f5b2ff', '#e4f5b2ff', '#e3f4b2ff', '#e3f4b2ff', '#e2f4b2ff', '#e1f4b2ff', '#e1f3b2ff', '#e0f3b2ff', '#e0f3b2ff', '#dff3b2ff', '#def3b2ff', '#def2b2ff', '#ddf2b2ff', '#ddf2b3ff', '#dcf2b3ff', '#dbf1b3ff', '#dbf1b3ff', '#daf1b3ff', '#d9f1b3ff', '#d9f0b3ff', '#d8f0b3ff', '#d8f0b3ff', '#d7f0b3ff', '#d6efb3ff', '#d6efb3ff', '#d5efb3ff', '#d5efb3ff', '#d4eeb3ff', '#d3eeb3ff', '#d3eeb3ff', '#d2eeb3ff', '#d2edb3ff', '#d1edb3ff', '#d0edb3ff', '#d0edb4ff', '#cfecb4ff', '#ceecb4ff', '#ceecb4ff', '#cdecb4ff', '#cdecb4ff', '#ccebb4ff', '#cbebb4ff', '#cbebb4ff', '#caebb4ff', '#caeab4ff', '#c9eab4ff', '#c8eab4ff', '#c8eab4ff', '#c7e9b4ff', '#c6e9b4ff', '#c5e8b4ff', '#c4e8b5ff', '#c2e7b5ff', '#c1e7b5ff', '#c0e7b5ff', '#bfe6b5ff', '#bee6b5ff', '#bde5b5ff', '#bbe5b5ff', '#bae4b5ff', '#b9e4b6ff', '#b8e3b6ff', '#b7e3b6ff', '#b6e3b6ff', '#b4e2b6ff', '#b3e2b6ff', '#b2e1b6ff', '#b1e1b6ff', '#b0e0b6ff', '#afe0b7ff', '#addfb7ff', '#acdfb7ff', '#abdeb7ff', '#aadeb7ff', '#a9deb7ff', '#a8ddb7ff', '#a7ddb7ff', '#a5dcb8ff', '#a4dcb8ff', '#a3dbb8ff', '#a2dbb8ff', '#a1dab8ff', '#a0dab8ff', '#9edab8ff', '#9dd9b8ff', '#9cd9b8ff', '#9bd8b9ff', '#9ad8b9ff', '#99d7b9ff', '#97d7b9ff', '#96d6b9ff', '#95d6b9ff', '#94d5b9ff', '#93d5b9ff', '#92d5b9ff', '#91d4baff', '#8fd4baff', '#8ed3baff', '#8dd3baff', '#8cd2baff', '#8bd2baff', '#8ad1baff', '#88d1baff', '#87d1baff', '#86d0bbff', '#85d0bbff', '#84cfbbff', '#83cfbbff', '#81cebbff', '#80cebbff', '#7fcdbbff', '#7ecdbbff', '#7dcdbcff', '#7cccbcff', '#7bccbcff', '#7acbbcff', '#79cbbcff', '#78cbbcff', '#77cabcff', '#76cabdff', '#75cabdff', '#74c9bdff', '#73c9bdff', '#72c9bdff', '#71c8bdff', '#70c8bdff', '#6fc7beff', '#6ec7beff', '#6dc7beff', '#6cc6beff', '#6bc6beff', '#6ac6beff', '#69c5beff', '#68c5bfff', '#67c4bfff', '#66c4bfff', '#65c4bfff', '#64c3bfff', '#63c3bfff', '#62c3bfff', '#61c2c0ff', '#60c2c0ff', '#5fc2c0ff', '#5ec1c0ff', '#5dc1c0ff', '#5cc0c0ff', '#5bc0c0ff', '#5ac0c1ff', '#59bfc1ff', '#58bfc1ff', '#57bfc1ff', '#56bec1ff', '#55bec1ff', '#54bdc1ff', '#53bdc2ff', '#52bdc2ff', '#51bcc2ff', '#50bcc2ff', '#4fbcc2ff', '#4ebbc2ff', '#4dbbc2ff', '#4cbac3ff', '#4bbac3ff', '#4abac3ff', '#49b9c3ff', '#48b9c3ff', '#47b9c3ff', '#46b8c3ff', '#45b8c4ff', '#44b8c4ff', '#43b7c4ff', '#42b7c4ff', '#41b6c4ff', '#40b6c4ff', '#40b5c4ff', '#3fb5c4ff', '#3fb4c4ff', '#3eb4c4ff', '#3eb3c4ff', '#3db2c4ff', '#3cb2c4ff', '#3cb1c4ff', '#3bb1c4ff', '#3bb0c4ff', '#3aafc4ff', '#3aafc3ff', '#39aec3ff', '#38aec3ff', '#38adc3ff', '#37acc3ff', '#37acc3ff', '#36abc3ff', '#35abc3ff', '#35aac3ff', '#34a9c3ff', '#34a9c3ff', '#33a8c3ff', '#33a8c3ff', '#32a7c3ff', '#31a6c3ff', '#31a6c2ff', '#30a5c2ff', '#30a5c2ff', '#2fa4c2ff', '#2fa3c2ff', '#2ea3c2ff', '#2da2c2ff', '#2da2c2ff', '#2ca1c2ff', '#2ca0c2ff', '#2ba0c2ff', '#2a9fc2ff', '#2a9fc2ff', '#299ec2ff', '#299dc2ff', '#289dc2ff', '#289cc1ff', '#279cc1ff', '#269bc1ff', '#269bc1ff', '#259ac1ff', '#2599c1ff', '#2499c1ff', '#2398c1ff', '#2398c1ff', '#2297c1ff', '#2296c1ff', '#2196c1ff', '#2195c1ff', '#2095c1ff', '#1f94c1ff', '#1f93c1ff', '#1e93c0ff', '#1e92c0ff', '#1d92c0ff', '#1d91c0ff', '#1d90c0ff', '#1d8fbfff', '#1d8fbfff', '#1d8ebfff', '#1d8dbeff', '#1d8cbeff', '#1d8bbeff', '#1d8abdff', '#1d8abdff', '#1d89bcff', '#1e88bcff', '#1e87bcff', '#1e86bbff', '#1e85bbff', '#1e85baff', '#1e84baff', '#1e83baff', '#1e82b9ff', '#1e81b9ff', '#1e81b8ff', '#1e80b8ff', '#1e7fb8ff', '#1e7eb7ff', '#1f7db7ff', '#1f7cb7ff', '#1f7cb6ff', '#1f7bb6ff', '#1f7ab5ff', '#1f79b5ff', '#1f78b5ff', '#1f78b4ff', '#1f77b4ff', '#1f76b3ff', '#1f75b3ff', '#1f74b3ff', '#2073b2ff', '#2073b2ff', '#2072b2ff', '#2071b1ff', '#2070b1ff', '#206fb0ff', '#206eb0ff', '#206eb0ff', '#206dafff', '#206cafff', '#206baeff', '#206aaeff', '#206aaeff', '#2169adff', '#2168adff', '#2167adff', '#2166acff', '#2165acff', '#2165abff', '#2164abff', '#2163abff', '#2162aaff', '#2161aaff', '#2161a9ff', '#2160a9ff', '#225fa9ff', '#225ea8ff', '#225da8ff', '#225da8ff', '#225ca7ff', '#225ba7ff', '#225ba7ff', '#225aa6ff', '#2259a6ff', '#2259a6ff', '#2258a5ff', '#2257a5ff', '#2257a5ff', '#2256a4ff', '#2255a4ff', '#2255a4ff', '#2254a3ff', '#2253a3ff', '#2253a3ff', '#2252a2ff', '#2351a2ff', '#2351a2ff', '#2350a1ff', '#234fa1ff', '#234ea1ff', '#234ea1ff', '#234da0ff', '#234ca0ff', '#234ca0ff', '#234b9fff', '#234a9fff', '#234a9fff', '#23499eff', '#23489eff', '#23489eff', '#23479dff', '#23469dff', '#23469dff', '#23459cff', '#23449cff', '#24449cff', '#24439bff', '#24429bff', '#24429bff', '#24419aff', '#24409aff', '#24409aff', '#243f99ff', '#243e99ff', '#243e99ff', '#243d98ff', '#243c98ff', '#243c98ff', '#243b98ff', '#243a97ff', '#243a97ff', '#243997ff', '#243896ff', '#243896ff', '#243796ff', '#243695ff', '#253595ff', '#253595ff', '#253494ff', '#243494ff', '#243393ff', '#243392ff', '#233291ff', '#233290ff', '#22328fff', '#22318eff', '#21318dff', '#21318cff', '#20308bff', '#20308aff', '#1f2f89ff', '#1f2f88ff', '#1e2f87ff', '#1e2e86ff', '#1d2e85ff', '#1d2e84ff', '#1d2d83ff', '#1c2d82ff', '#1c2d81ff', '#1b2c80ff', '#1b2c7fff', '#1a2b7eff', '#1a2b7eff', '#192b7dff', '#192a7cff', '#182a7bff', '#182a7aff', '#172979ff', '#172978ff', '#162877ff', '#162876ff', '#162875ff', '#152774ff', '#152773ff', '#142772ff', '#142671ff', '#132670ff', '#13256fff', '#12256eff', '#12256dff', '#11246cff', '#11246bff', '#10246aff', '#102369ff', '#0f2368ff', '#0f2367ff', '#0f2266ff', '#0e2265ff', '#0e2164ff', '#0d2163ff', '#0d2162ff', '#0c2062ff', '#0c2061ff', '#0b2060ff', '#0b1f5fff', '#0a1f5eff', '#0a1e5dff', '#091e5cff', '#091e5bff', '#081d5aff', '#081d59ff', '#081d58ff']);
+    
+
+    color_map_1c91032a33172970e47b94370cfbba4d.x = d3.scale.linear()
+              .domain([63621.0, 168132.0])
+              .range([0, 450 - 50]);
+
+    color_map_1c91032a33172970e47b94370cfbba4d.legend = L.control({position: 'topright'});
+    color_map_1c91032a33172970e47b94370cfbba4d.legend.onAdd = function (map) {var div = L.DomUtil.create('div', 'legend'); return div};
+    color_map_1c91032a33172970e47b94370cfbba4d.legend.addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+
+    color_map_1c91032a33172970e47b94370cfbba4d.xAxis = d3.svg.axis()
+        .scale(color_map_1c91032a33172970e47b94370cfbba4d.x)
+        .orient("top")
+        .tickSize(1)
+        .tickValues([63621.0, 76684.875, 89748.75, 102812.625, 115876.5, 128940.375, 142004.25, 155068.125, 168132.0]);
+
+    color_map_1c91032a33172970e47b94370cfbba4d.svg = d3.select(".legend.leaflet-control").append("svg")
+        .attr("id", 'legend')
+        .attr("width", 450)
+        .attr("height", 40);
+
+    color_map_1c91032a33172970e47b94370cfbba4d.g = color_map_1c91032a33172970e47b94370cfbba4d.svg.append("g")
+        .attr("class", "key")
+        .attr("fill", "black")
+        .attr("transform", "translate(25,16)");
+
+    color_map_1c91032a33172970e47b94370cfbba4d.g.selectAll("rect")
+        .data(color_map_1c91032a33172970e47b94370cfbba4d.color.range().map(function(d, i) {
+          return {
+            x0: i ? color_map_1c91032a33172970e47b94370cfbba4d.x(color_map_1c91032a33172970e47b94370cfbba4d.color.domain()[i - 1]) : color_map_1c91032a33172970e47b94370cfbba4d.x.range()[0],
+            x1: i < color_map_1c91032a33172970e47b94370cfbba4d.color.domain().length ? color_map_1c91032a33172970e47b94370cfbba4d.x(color_map_1c91032a33172970e47b94370cfbba4d.color.domain()[i]) : color_map_1c91032a33172970e47b94370cfbba4d.x.range()[1],
+            z: d
+          };
+        }))
+      .enter().append("rect")
+        .attr("height", 40 - 30)
+        .attr("x", function(d) { return d.x0; })
+        .attr("width", function(d) { return d.x1 - d.x0; })
+        .style("fill", function(d) { return d.z; });
+
+    color_map_1c91032a33172970e47b94370cfbba4d.g.call(color_map_1c91032a33172970e47b94370cfbba4d.xAxis).append("text")
+        .attr("class", "caption")
+        .attr("y", 21)
+        .attr("fill", "black")
+        .text("Median household income");
+    
+            var circle_marker_0d64be34bc720754621040444c545e60 = L.circleMarker(
+                [47.6108244, -122.3360871],
+                {"bubblingMouseEvents": true, "color": "#58bfc1ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#58bfc1ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_3b9f91d1633eaed34e28907034fa02a5 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_41c7f692d044bcf59c44ab754fcf67ba = $(`<div id="html_41c7f692d044bcf59c44ab754fcf67ba" style="width: 100.0%; height: 100.0%;"><b>ZIP 98101</b><br>Population: 16,302<br>Median income: $111,099</div>`)[0];
+                popup_3b9f91d1633eaed34e28907034fa02a5.setContent(html_41c7f692d044bcf59c44ab754fcf67ba);
+            
+        
+
+        circle_marker_0d64be34bc720754621040444c545e60.bindPopup(popup_3b9f91d1633eaed34e28907034fa02a5)
+        ;
+
+        
+    
+    
+            var circle_marker_b08fc09a3a00a10fa8ae2dd0a36de8e9 = L.circleMarker(
+                [47.6340884, -122.3221504],
+                {"bubblingMouseEvents": true, "color": "#4ab9c3ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#4ab9c3ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 16, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_1dea926855b73860c4ee46e72e131ee2 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_96ff1a8e640b2786262826252f3b489f = $(`<div id="html_96ff1a8e640b2786262826252f3b489f" style="width: 100.0%; height: 100.0%;"><b>ZIP 98102</b><br>Population: 25,827<br>Median income: $114,026</div>`)[0];
+                popup_1dea926855b73860c4ee46e72e131ee2.setContent(html_96ff1a8e640b2786262826252f3b489f);
+            
+        
+
+        circle_marker_b08fc09a3a00a10fa8ae2dd0a36de8e9.bindPopup(popup_1dea926855b73860c4ee46e72e131ee2)
+        ;
+
+        
+    
+    
+            var circle_marker_15189943967b1de950f387b7ceb94ebc = L.circleMarker(
+                [47.6736249, -122.343985],
+                {"bubblingMouseEvents": true, "color": "#2ea3c2ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2ea3c2ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 28, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_96b49b0834693ce2144674cab5174eb4 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_742cfb99de595fad25ae2c90a51174a1 = $(`<div id="html_742cfb99de595fad25ae2c90a51174a1" style="width: 100.0%; height: 100.0%;"><b>ZIP 98103</b><br>Population: 51,878<br>Median income: $122,656</div>`)[0];
+                popup_96b49b0834693ce2144674cab5174eb4.setContent(html_742cfb99de595fad25ae2c90a51174a1);
+            
+        
+
+        circle_marker_15189943967b1de950f387b7ceb94ebc.bindPopup(popup_96b49b0834693ce2144674cab5174eb4)
+        ;
+
+        
+    
+    
+            var circle_marker_641c7f284923ce72651ade86f9d00cc9 = L.circleMarker(
+                [47.6016225, -122.3291673],
+                {"bubblingMouseEvents": true, "color": "#ffffd9ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ffffd9ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_b1dd8dc85a7547c1a6035724c5c80cd0 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_57c6572e9304aec26d2e55383936b7a5 = $(`<div id="html_57c6572e9304aec26d2e55383936b7a5" style="width: 100.0%; height: 100.0%;"><b>ZIP 98104</b><br>Population: 15,052<br>Median income: $63,621</div>`)[0];
+                popup_b1dd8dc85a7547c1a6035724c5c80cd0.setContent(html_57c6572e9304aec26d2e55383936b7a5);
+            
+        
+
+        circle_marker_641c7f284923ce72651ade86f9d00cc9.bindPopup(popup_b1dd8dc85a7547c1a6035724c5c80cd0)
+        ;
+
+        
+    
+    
+            var circle_marker_2b644f38eedb92739d08adb954124c5b = L.circleMarker(
+                [47.6645596, -122.299309],
+                {"bubblingMouseEvents": true, "color": "#eff9b6ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#eff9b6ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 28, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_8aa2d30cac9e54320a5332a5c10850c7 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_24a65bade7970b1849244dbd7327dc48 = $(`<div id="html_24a65bade7970b1849244dbd7327dc48" style="width: 100.0%; height: 100.0%;"><b>ZIP 98105</b><br>Population: 50,302<br>Median income: $75,214</div>`)[0];
+                popup_8aa2d30cac9e54320a5332a5c10850c7.setContent(html_24a65bade7970b1849244dbd7327dc48);
+            
+        
+
+        circle_marker_2b644f38eedb92739d08adb954124c5b.bindPopup(popup_8aa2d30cac9e54320a5332a5c10850c7)
+        ;
+
+        
+    
+    
+            var circle_marker_d0b326e6fd4c1b91f2c75f456a2b817f = L.circleMarker(
+                [47.5356746, -122.3559507],
+                {"bubblingMouseEvents": true, "color": "#acdfb7ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#acdfb7ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 17, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_c27aa5bbeac68df3df196d232d8da6e8 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_6cf200f1a9148b5025a882b2134b91f4 = $(`<div id="html_6cf200f1a9148b5025a882b2134b91f4" style="width: 100.0%; height: 100.0%;"><b>ZIP 98106</b><br>Population: 28,243<br>Median income: $94,762</div>`)[0];
+                popup_c27aa5bbeac68df3df196d232d8da6e8.setContent(html_6cf200f1a9148b5025a882b2134b91f4);
+            
+        
+
+        circle_marker_d0b326e6fd4c1b91f2c75f456a2b817f.bindPopup(popup_c27aa5bbeac68df3df196d232d8da6e8)
+        ;
+
+        
+    
+    
+            var circle_marker_510d4c7ea22a71642f576e810c6aa584 = L.circleMarker(
+                [47.6692675, -122.3766571],
+                {"bubblingMouseEvents": true, "color": "#1e87bbff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#1e87bbff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 17, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_9fa047df9492d2b3168357b617a3fb48 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_c234be9ecfab1390967597149d12f6c4 = $(`<div id="html_c234be9ecfab1390967597149d12f6c4" style="width: 100.0%; height: 100.0%;"><b>ZIP 98107</b><br>Population: 28,170<br>Median income: $131,559</div>`)[0];
+                popup_9fa047df9492d2b3168357b617a3fb48.setContent(html_c234be9ecfab1390967597149d12f6c4);
+            
+        
+
+        circle_marker_510d4c7ea22a71642f576e810c6aa584.bindPopup(popup_9fa047df9492d2b3168357b617a3fb48)
+        ;
+
+        
+    
+    
+            var circle_marker_8c2da5d804aeab603963c29a61aac8bf = L.circleMarker(
+                [47.546906, -122.31085],
+                {"bubblingMouseEvents": true, "color": "#c5e8b4ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#c5e8b4ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_4fa8b2ffee7a9ccceaf48cfeaba36722 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_f140cad453ddd9a39a7ccad7951460f9 = $(`<div id="html_f140cad453ddd9a39a7ccad7951460f9" style="width: 100.0%; height: 100.0%;"><b>ZIP 98108</b><br>Population: 23,762<br>Median income: $90,179</div>`)[0];
+                popup_4fa8b2ffee7a9ccceaf48cfeaba36722.setContent(html_f140cad453ddd9a39a7ccad7951460f9);
+            
+        
+
+        circle_marker_8c2da5d804aeab603963c29a61aac8bf.bindPopup(popup_4fa8b2ffee7a9ccceaf48cfeaba36722)
+        ;
+
+        
+    
+    
+            var circle_marker_ea0d77e41aafcd12df99c8d74081428f = L.circleMarker(
+                [47.6329484, -122.3482707],
+                {"bubblingMouseEvents": true, "color": "#299ec2ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#299ec2ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 19, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_7c02447c57752116687a84fbfb3bfaa7 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_525aee0681f48411c83dc0ad79a9b15b = $(`<div id="html_525aee0681f48411c83dc0ad79a9b15b" style="width: 100.0%; height: 100.0%;"><b>ZIP 98109</b><br>Population: 32,251<br>Median income: $124,408</div>`)[0];
+                popup_7c02447c57752116687a84fbfb3bfaa7.setContent(html_525aee0681f48411c83dc0ad79a9b15b);
+            
+        
+
+        circle_marker_ea0d77e41aafcd12df99c8d74081428f.bindPopup(popup_7c02447c57752116687a84fbfb3bfaa7)
+        ;
+
+        
+    
+    
+            var circle_marker_949eb281422ef1e52a5fe7c9899716d9 = L.circleMarker(
+                [47.6293348, -122.2985902],
+                {"bubblingMouseEvents": true, "color": "#243a97ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#243a97ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_f39e58d04ca1e3d9859407a429bc0719 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_1f01bb8665e2d1b0226575f918ffccbf = $(`<div id="html_1f01bb8665e2d1b0226575f918ffccbf" style="width: 100.0%; height: 100.0%;"><b>ZIP 98112</b><br>Population: 23,456<br>Median income: $153,204</div>`)[0];
+                popup_f39e58d04ca1e3d9859407a429bc0719.setContent(html_1f01bb8665e2d1b0226575f918ffccbf);
+            
+        
+
+        circle_marker_949eb281422ef1e52a5fe7c9899716d9.bindPopup(popup_f39e58d04ca1e3d9859407a429bc0719)
+        ;
+
+        
+    
+    
+            var circle_marker_81501e7b68c805bf87408912ef226ff4 = L.circleMarker(
+                [47.6846439, -122.2999955],
+                {"bubblingMouseEvents": true, "color": "#2162aaff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2162aaff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 30, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_fc64630579e59859dcc504d9d84bd9f2 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_b3760bb81a67cc97554e8b6f7305472f = $(`<div id="html_b3760bb81a67cc97554e8b6f7305472f" style="width: 100.0%; height: 100.0%;"><b>ZIP 98115</b><br>Population: 54,457<br>Median income: $141,013</div>`)[0];
+                popup_fc64630579e59859dcc504d9d84bd9f2.setContent(html_b3760bb81a67cc97554e8b6f7305472f);
+            
+        
+
+        circle_marker_81501e7b68c805bf87408912ef226ff4.bindPopup(popup_fc64630579e59859dcc504d9d84bd9f2)
+        ;
+
+        
+    
+    
+            var circle_marker_35dc6ce727d17392ade5a005229aff7a = L.circleMarker(
+                [47.5740375, -122.3940475],
+                {"bubblingMouseEvents": true, "color": "#1d8dbeff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#1d8dbeff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 17, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_8de2fd8ff4b1cfebaa03e2e3cc602fc1 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_7b31746d80873a5b56e0e06ffd22a096 = $(`<div id="html_7b31746d80873a5b56e0e06ffd22a096" style="width: 100.0%; height: 100.0%;"><b>ZIP 98116</b><br>Population: 27,871<br>Median income: $129,924</div>`)[0];
+                popup_8de2fd8ff4b1cfebaa03e2e3cc602fc1.setContent(html_7b31746d80873a5b56e0e06ffd22a096);
+            
+        
+
+        circle_marker_35dc6ce727d17392ade5a005229aff7a.bindPopup(popup_8de2fd8ff4b1cfebaa03e2e3cc602fc1)
+        ;
+
+        
+    
+    
+            var circle_marker_3631a5f4bc15e55e92e818bf8b2522fc = L.circleMarker(
+                [47.6869243, -122.3783073],
+                {"bubblingMouseEvents": true, "color": "#0c2062ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#0c2062ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 21, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_ed5425d456dd77941089f08b6f20b05e = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_4e415d8920e37be447d4d1098b5b81e7 = $(`<div id="html_4e415d8920e37be447d4d1098b5b81e7" style="width: 100.0%; height: 100.0%;"><b>ZIP 98117</b><br>Population: 36,115<br>Median income: $166,029</div>`)[0];
+                popup_ed5425d456dd77941089f08b6f20b05e.setContent(html_4e415d8920e37be447d4d1098b5b81e7);
+            
+        
+
+        circle_marker_3631a5f4bc15e55e92e818bf8b2522fc.bindPopup(popup_ed5425d456dd77941089f08b6f20b05e)
+        ;
+
+        
+    
+    
+            var circle_marker_8b912a8d026291c821e066477ab74615 = L.circleMarker(
+                [47.5415664, -122.2762056],
+                {"bubblingMouseEvents": true, "color": "#6bc6beff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#6bc6beff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 27, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_fa41e76e189a23873c1cdfc1f005106b = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_8f3f44909d7829de046d622dc8a4e38c = $(`<div id="html_8f3f44909d7829de046d622dc8a4e38c" style="width: 100.0%; height: 100.0%;"><b>ZIP 98118</b><br>Population: 48,874<br>Median income: $106,930</div>`)[0];
+                popup_fa41e76e189a23873c1cdfc1f005106b.setContent(html_8f3f44909d7829de046d622dc8a4e38c);
+            
+        
+
+        circle_marker_8b912a8d026291c821e066477ab74615.bindPopup(popup_fa41e76e189a23873c1cdfc1f005106b)
+        ;
+
+        
+    
+    
+            var circle_marker_75328ecef9eeabca50328ac5509b2cb9 = L.circleMarker(
+                [47.6394743, -122.366864],
+                {"bubblingMouseEvents": true, "color": "#4fbcc2ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#4fbcc2ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 16, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_314d039d1af892d11b1e344cb3f13349 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_99c307463de3885e19ffe938fefd129a = $(`<div id="html_99c307463de3885e19ffe938fefd129a" style="width: 100.0%; height: 100.0%;"><b>ZIP 98119</b><br>Population: 25,906<br>Median income: $112,865</div>`)[0];
+                popup_314d039d1af892d11b1e344cb3f13349.setContent(html_99c307463de3885e19ffe938fefd129a);
+            
+        
+
+        circle_marker_75328ecef9eeabca50328ac5509b2cb9.bindPopup(popup_314d039d1af892d11b1e344cb3f13349)
+        ;
+
+        
+    
+    
+            var circle_marker_7f6b5ee24f5475b1dce3d36f019df456 = L.circleMarker(
+                [47.6150408, -122.3458337],
+                {"bubblingMouseEvents": true, "color": "#225ba7ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#225ba7ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_b2fc7a2c23e6501c78e60fca55ab4ab9 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_6f02451f63627418e28a770ecfb05daf = $(`<div id="html_6f02451f63627418e28a770ecfb05daf" style="width: 100.0%; height: 100.0%;"><b>ZIP 98121</b><br>Population: 20,562<br>Median income: $142,926</div>`)[0];
+                popup_b2fc7a2c23e6501c78e60fca55ab4ab9.setContent(html_6f02451f63627418e28a770ecfb05daf);
+            
+        
+
+        circle_marker_7f6b5ee24f5475b1dce3d36f019df456.bindPopup(popup_b2fc7a2c23e6501c78e60fca55ab4ab9)
+        ;
+
+        
+    
+    
+            var circle_marker_c6facc7dbb3fed652b49b214cfa5610a = L.circleMarker(
+                [47.6107015, -122.3037482],
+                {"bubblingMouseEvents": true, "color": "#addfb7ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#addfb7ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 23, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_21c71c94c284c58c4828fcaf45f2b67f = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_c7a123b8ed4a70c66a7f63bb8fecdc82 = $(`<div id="html_c7a123b8ed4a70c66a7f63bb8fecdc82" style="width: 100.0%; height: 100.0%;"><b>ZIP 98122</b><br>Population: 41,268<br>Median income: $94,548</div>`)[0];
+                popup_21c71c94c284c58c4828fcaf45f2b67f.setContent(html_c7a123b8ed4a70c66a7f63bb8fecdc82);
+            
+        
+
+        circle_marker_c6facc7dbb3fed652b49b214cfa5610a.bindPopup(popup_21c71c94c284c58c4828fcaf45f2b67f)
+        ;
+
+        
+    
+    
+            var circle_marker_e74520109d7f7e8c150ec44fae8e1dce = L.circleMarker(
+                [47.7160611, -122.3022243],
+                {"bubblingMouseEvents": true, "color": "#c6e9b4ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#c6e9b4ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_e5fe912a49363d390e25368d7dbdc722 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_5864e0a15071df94375f21df3cfdc901 = $(`<div id="html_5864e0a15071df94375f21df3cfdc901" style="width: 100.0%; height: 100.0%;"><b>ZIP 98125</b><br>Population: 43,993<br>Median income: $89,983</div>`)[0];
+                popup_e5fe912a49363d390e25368d7dbdc722.setContent(html_5864e0a15071df94375f21df3cfdc901);
+            
+        
+
+        circle_marker_e74520109d7f7e8c150ec44fae8e1dce.bindPopup(popup_e5fe912a49363d390e25368d7dbdc722)
+        ;
+
+        
+    
+    
+            var circle_marker_c575510c90d1044ab7814f4cb7a50c78 = L.circleMarker(
+                [47.5456972, -122.3749648],
+                {"bubblingMouseEvents": true, "color": "#66c4bfff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#66c4bfff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_1805a036f2eb59e32dcefa020e82e2ec = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_c73c984ef0ef6670bc4353db3a832418 = $(`<div id="html_c73c984ef0ef6670bc4353db3a832418" style="width: 100.0%; height: 100.0%;"><b>ZIP 98126</b><br>Population: 21,102<br>Median income: $108,072</div>`)[0];
+                popup_1805a036f2eb59e32dcefa020e82e2ec.setContent(html_c73c984ef0ef6670bc4353db3a832418);
+            
+        
+
+        circle_marker_c575510c90d1044ab7814f4cb7a50c78.bindPopup(popup_1805a036f2eb59e32dcefa020e82e2ec)
+        ;
+
+        
+    
+    
+            var circle_marker_4f38680d83ba1d61032324abf499306b = L.circleMarker(
+                [47.7369898, -122.3442661],
+                {"bubblingMouseEvents": true, "color": "#d5efb3ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#d5efb3ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 28, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_dd779b8932a771366e76a9e8235f2508 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_e7bc9fa247ca6b77367e10a7fd209139 = $(`<div id="html_e7bc9fa247ca6b77367e10a7fd209139" style="width: 100.0%; height: 100.0%;"><b>ZIP 98133</b><br>Population: 50,921<br>Median income: $85,059</div>`)[0];
+                popup_dd779b8932a771366e76a9e8235f2508.setContent(html_e7bc9fa247ca6b77367e10a7fd209139);
+            
+        
+
+        circle_marker_4f38680d83ba1d61032324abf499306b.bindPopup(popup_dd779b8932a771366e76a9e8235f2508)
+        ;
+
+        
+    
+    
+            var circle_marker_4864b1df0810ecaa0050343a5853f2ae = L.circleMarker(
+                [47.578964, -122.3328386],
+                {"bubblingMouseEvents": true, "color": "#fdffd5ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#fdffd5ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_5d9efe0f3a3b320cdafc5971103c55e0 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_e0b82bd217e92fd437e284621cd0746d = $(`<div id="html_e0b82bd217e92fd437e284621cd0746d" style="width: 100.0%; height: 100.0%;"><b>ZIP 98134</b><br>Population: 852<br>Median income: $65,139</div>`)[0];
+                popup_5d9efe0f3a3b320cdafc5971103c55e0.setContent(html_e0b82bd217e92fd437e284621cd0746d);
+            
+        
+
+        circle_marker_4864b1df0810ecaa0050343a5853f2ae.bindPopup(popup_5d9efe0f3a3b320cdafc5971103c55e0)
+        ;
+
+        
+    
+    
+            var circle_marker_d266547081d978984b6789abf7395409 = L.circleMarker(
+                [47.5393833, -122.3886737],
+                {"bubblingMouseEvents": true, "color": "#2255a4ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2255a4ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 12, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_24b6543430d52aa44362e4c9626f6c65 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_232224ca1f735d519fc4b1882929797e = $(`<div id="html_232224ca1f735d519fc4b1882929797e" style="width: 100.0%; height: 100.0%;"><b>ZIP 98136</b><br>Population: 17,420<br>Median income: $144,659</div>`)[0];
+                popup_24b6543430d52aa44362e4c9626f6c65.setContent(html_232224ca1f735d519fc4b1882929797e);
+            
+        
+
+        circle_marker_d266547081d978984b6789abf7395409.bindPopup(popup_24b6543430d52aa44362e4c9626f6c65)
+        ;
+
+        
+    
+    
+            var circle_marker_dc3e5865e88381550e528022b7397394 = L.circleMarker(
+                [47.5855756, -122.3023964],
+                {"bubblingMouseEvents": true, "color": "#9ad8b9ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#9ad8b9ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 19, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_e18bab6721fb127b1d3e48229409bc4e = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_bfe32ae8c0320bc46deef600a0a83460 = $(`<div id="html_bfe32ae8c0320bc46deef600a0a83460" style="width: 100.0%; height: 100.0%;"><b>ZIP 98144</b><br>Population: 32,540<br>Median income: $97,953</div>`)[0];
+                popup_e18bab6721fb127b1d3e48229409bc4e.setContent(html_bfe32ae8c0320bc46deef600a0a83460);
+            
+        
+
+        circle_marker_dc3e5865e88381550e528022b7397394.bindPopup(popup_e18bab6721fb127b1d3e48229409bc4e)
+        ;
+
+        
+    
+    
+            var circle_marker_73bb18b3a5b27a9fea9cf50ecf4180f2 = L.circleMarker(
+                [47.502022, -122.3576117],
+                {"bubblingMouseEvents": true, "color": "#89d1baff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#89d1baff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 17, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_6a54c60b03bebc1a7e4fa5ab7db3238a = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_97feb00fd75d04209cbd186ddbb15c61 = $(`<div id="html_97feb00fd75d04209cbd186ddbb15c61" style="width: 100.0%; height: 100.0%;"><b>ZIP 98146</b><br>Population: 28,088<br>Median income: $101,051</div>`)[0];
+                popup_6a54c60b03bebc1a7e4fa5ab7db3238a.setContent(html_97feb00fd75d04209cbd186ddbb15c61);
+            
+        
+
+        circle_marker_73bb18b3a5b27a9fea9cf50ecf4180f2.bindPopup(popup_6a54c60b03bebc1a7e4fa5ab7db3238a)
+        ;
+
+        
+    
+    
+            var circle_marker_837889443a7a805f0501b7583a3a1713 = L.circleMarker(
+                [47.6059886, -122.3337695],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_e4402ac688b9fa399d5e4f5734123931 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_27c86c94c8740b2e6d30ba96999b4f81 = $(`<div id="html_27c86c94c8740b2e6d30ba96999b4f81" style="width: 100.0%; height: 100.0%;"><b>ZIP 98154</b><br>Population: 0<br>Median income: N/A</div>`)[0];
+                popup_e4402ac688b9fa399d5e4f5734123931.setContent(html_27c86c94c8740b2e6d30ba96999b4f81);
+            
+        
+
+        circle_marker_837889443a7a805f0501b7583a3a1713.bindPopup(popup_e4402ac688b9fa399d5e4f5734123931)
+        ;
+
+        
+    
+    
+            var circle_marker_fae65393b1726916b4397d64a23f5015 = L.circleMarker(
+                [47.7564967, -122.3032658],
+                {"bubblingMouseEvents": true, "color": "#299ec2ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#299ec2ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 20, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_3efa33d78459c410e26e4dd25165d540 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_a29f94600ffc9558d4182235579ea899 = $(`<div id="html_a29f94600ffc9558d4182235579ea899" style="width: 100.0%; height: 100.0%;"><b>ZIP 98155</b><br>Population: 35,550<br>Median income: $124,531</div>`)[0];
+                popup_3efa33d78459c410e26e4dd25165d540.setContent(html_a29f94600ffc9558d4182235579ea899);
+            
+        
+
+        circle_marker_fae65393b1726916b4397d64a23f5015.bindPopup(popup_3efa33d78459c410e26e4dd25165d540)
+        ;
+
+        
+    
+    
+            var circle_marker_9e9c264abb0eef1f97cd0d6c456cffca = L.circleMarker(
+                [47.4566097, -122.3497383],
+                {"bubblingMouseEvents": true, "color": "#75c9bdff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#75c9bdff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_93926af82bfa63f9a17fd4deffae612f = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_329be74629ff4323470ee841ea9b9f41 = $(`<div id="html_329be74629ff4323470ee841ea9b9f41" style="width: 100.0%; height: 100.0%;"><b>ZIP 98166</b><br>Population: 22,418<br>Median income: $105,013</div>`)[0];
+                popup_93926af82bfa63f9a17fd4deffae612f.setContent(html_329be74629ff4323470ee841ea9b9f41);
+            
+        
+
+        circle_marker_9e9c264abb0eef1f97cd0d6c456cffca.bindPopup(popup_93926af82bfa63f9a17fd4deffae612f)
+        ;
+
+        
+    
+    
+            var circle_marker_c7342681fd2fe9dd78e021308675eace = L.circleMarker(
+                [47.4888912, -122.3055412],
+                {"bubblingMouseEvents": true, "color": "#eaf7b1ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#eaf7b1ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 20, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_a565438d69bd310bbea5d3c064a0547c = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_493114b7594a81826a215a8de5e72875 = $(`<div id="html_493114b7594a81826a215a8de5e72875" style="width: 100.0%; height: 100.0%;"><b>ZIP 98168</b><br>Population: 35,050<br>Median income: $77,935</div>`)[0];
+                popup_a565438d69bd310bbea5d3c064a0547c.setContent(html_493114b7594a81826a215a8de5e72875);
+            
+        
+
+        circle_marker_c7342681fd2fe9dd78e021308675eace.bindPopup(popup_a565438d69bd310bbea5d3c064a0547c)
+        ;
+
+        
+    
+    
+            var circle_marker_5e405a66740fde3cecd93d32e1c4f2c7 = L.circleMarker(
+                [47.7421545, -122.3696874],
+                {"bubblingMouseEvents": true, "color": "#243996ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#243996ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_e3f76fb7de60967bfc5765eb65dd1917 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_b8559f4a2626dcf7b1734ef63e862e16 = $(`<div id="html_b8559f4a2626dcf7b1734ef63e862e16" style="width: 100.0%; height: 100.0%;"><b>ZIP 98177</b><br>Population: 21,114<br>Median income: $153,542</div>`)[0];
+                popup_e3f76fb7de60967bfc5765eb65dd1917.setContent(html_b8559f4a2626dcf7b1734ef63e862e16);
+            
+        
+
+        circle_marker_5e405a66740fde3cecd93d32e1c4f2c7.bindPopup(popup_e3f76fb7de60967bfc5765eb65dd1917)
+        ;
+
+        
+    
+    
+            var circle_marker_c68e10ab3d0828912dd5fca76c81e815 = L.circleMarker(
+                [47.4983534, -122.2476012],
+                {"bubblingMouseEvents": true, "color": "#a0dab8ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#a0dab8ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 16, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_7da7d090525858f5dcfc7bd313b1c02c = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_11a44a30d4e352afa193cf95a68fdca9 = $(`<div id="html_11a44a30d4e352afa193cf95a68fdca9" style="width: 100.0%; height: 100.0%;"><b>ZIP 98178</b><br>Population: 26,760<br>Median income: $96,875</div>`)[0];
+                popup_7da7d090525858f5dcfc7bd313b1c02c.setContent(html_11a44a30d4e352afa193cf95a68fdca9);
+            
+        
+
+        circle_marker_c68e10ab3d0828912dd5fca76c81e815.bindPopup(popup_7da7d090525858f5dcfc7bd313b1c02c)
+        ;
+
+        
+    
+    
+            var circle_marker_80056af8edd12e0d4fd234689f37d53e = L.circleMarker(
+                [47.4493089, -122.2761061],
+                {"bubblingMouseEvents": true, "color": "#eaf7b1ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#eaf7b1ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 17, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_709cfb4715ad460b2b90cfca389f8c1a = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_85aaa0af1d00201c9a05b55af9d13053 = $(`<div id="html_85aaa0af1d00201c9a05b55af9d13053" style="width: 100.0%; height: 100.0%;"><b>ZIP 98188</b><br>Population: 27,523<br>Median income: $77,722</div>`)[0];
+                popup_709cfb4715ad460b2b90cfca389f8c1a.setContent(html_85aaa0af1d00201c9a05b55af9d13053);
+            
+        
+
+        circle_marker_80056af8edd12e0d4fd234689f37d53e.bindPopup(popup_709cfb4715ad460b2b90cfca389f8c1a)
+        ;
+
+        
+    
+    
+            var circle_marker_5148270b6d6eb1c45d4fd46187f09739 = L.circleMarker(
+                [47.6483986, -122.3977738],
+                {"bubblingMouseEvents": true, "color": "#081d58ff", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#081d58ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14, "stroke": true, "weight": 3}
+            ).addTo(map_ab41a5218cbbe8565cb7a7c6dfee7659);
+        
+    
+        var popup_c03a3aefa472b01fcd4c9353374987c1 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_dd0e1920e3b5512ed8e708da7d9641ed = $(`<div id="html_dd0e1920e3b5512ed8e708da7d9641ed" style="width: 100.0%; height: 100.0%;"><b>ZIP 98199</b><br>Population: 22,359<br>Median income: $168,132</div>`)[0];
+                popup_c03a3aefa472b01fcd4c9353374987c1.setContent(html_dd0e1920e3b5512ed8e708da7d9641ed);
+            
+        
+
+        circle_marker_5148270b6d6eb1c45d4fd46187f09739.bindPopup(popup_c03a3aefa472b01fcd4c9353374987c1)
+        ;
+
+        
+    
+</script>
+</html>
