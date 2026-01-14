@@ -2,7 +2,14 @@ import requests
 import pandas as pd
 import sys
 import math
+import re
+import csv
+from io import BytesIO
 from typing import List
+
+# https://www.bls.gov/oes/2023/may/oes_stru.htm
+# https://www.bls.gov/sae/additional-resources/metropolitan-and-necta-divisions-published-by-ces.htm
+
 
 API_KEY = "b01e3890d44f4456820f88b2fd6e5351"
 
@@ -91,39 +98,55 @@ def download_soc_codes(out_csv: str = 'soc_codes.csv') -> bool:
 
 
 def fetch_all_metro_area_codes() -> List[str]:
-    """Download BLS OE area codes and return all metropolitan area codes (prefix 'MT')."""
-    # Try multiple candidate URLs with a browser user-agent to avoid simple blocking
+    """Download known area files and return list of metro area dicts: {'code','title'}.
+
+    Tries several candidate endpoints and parses lines to find codes beginning with MT.
+    """
     candidates = [
         "https://download.bls.gov/pub/time.series/oe/oe.area",
         "https://download.bls.gov/pub/time.series/oe/oe.area.txt",
+        "https://download.bls.gov/pub/time.series/area/area",
+        "https://download.bls.gov/pub/time.series/area/area.txt",
         "https://download.bls.gov/pub/time.series/oe/oe.area?raw=true",
     ]
     headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0 Safari/537.36"}
-    r = None
+
+    text = None
     for url in candidates:
         try:
-            r = requests.get(url, timeout=30, headers=headers)
-            r.raise_for_status()
+            resp = requests.get(url, timeout=30, headers=headers)
+            resp.raise_for_status()
+            text = resp.text
             break
-        except Exception:
-            r = None
+        except Exception as e:
+            print(f"Area candidate failed: {url} ({e})", file=sys.stderr)
             continue
 
-    if r is None:
+    if not text:
         print("Failed to download area codes from known endpoints.", file=sys.stderr)
         return []
 
-    lines = r.text.splitlines()
-    codes = []
-    for ln in lines:
-        if not ln.strip() or ln.startswith('#'):
+    metros = []
+    for ln in text.splitlines():
+        ln = ln.strip()
+        if not ln or ln.startswith('#'):
             continue
-        parts = ln.split('\t') if '\t' in ln else ln.split()
-        if len(parts) >= 1:
-            code = parts[0].strip()
-            if code.upper().startswith('MT'):
-                codes.append(code)
-    return codes
+        # split on tab if possible, else whitespace
+        parts = ln.split('\t') if '\t' in ln else ln.split(None, 1)
+        code = parts[0].strip()
+        title = parts[1].strip() if len(parts) > 1 else ''
+        m = re.match(r'^(MT\d{5})', code.upper())
+        if m:
+            metros.append({'code': m.group(1), 'title': title})
+
+    # dedupe while preserving order
+    seen = set()
+    out = []
+    for m in metros:
+        if m['code'] not in seen:
+            seen.add(m['code'])
+            out.append(m)
+    return out
 
 
 def chunked(iterable, n):
@@ -165,25 +188,23 @@ def query_bls_series(series_ids: List[str], startyear: str = "2023", endyear: st
 
 
 def main():
-    # 1) fetch metro area codes
-    area_codes = fetch_all_metro_area_codes()
-    if not area_codes:
+    # For now: only fetch and save MT metropolitan area codes to metro_codes.csv
+    metros = fetch_all_metro_area_codes()
+    if not metros:
         print("No metro area codes found; aborting.", file=sys.stderr)
         return
-    print(f"Found {len(area_codes)} metro area codes; building series IDs...", file=sys.stderr)
 
-    # 2) build series ids for the chosen SOC_CODE
-    series_ids = build_series_ids(area_codes, SOC_CODE)
-
-    # 3) query BLS in batches
-    print(f"Querying BLS for {len(series_ids)} series (batched)", file=sys.stderr)
-    rows = query_bls_series(series_ids)
-
-    # 4) output CSV to stdout
-    df = pd.DataFrame(rows)
-    # ensure stable column order
-    cols = [c for c in ['series_id', 'year', 'period', 'value', 'footnotes'] if c in df.columns]
-    df.to_csv(sys.stdout, index=False, columns=cols)
+    out_csv = 'metro_codes.csv'
+    try:
+        with open(out_csv, 'w', newline='', encoding='utf-8') as fh:
+            writer = csv.DictWriter(fh, fieldnames=['area_code', 'title'])
+            writer.writeheader()
+            for m in metros:
+                writer.writerow({'area_code': m['code'], 'title': m.get('title', '')})
+        print(f"Saved {len(metros)} metro area codes to: {out_csv}")
+    except Exception as e:
+        print(f"Failed to write {out_csv}: {e}", file=sys.stderr)
+        return
 
 
 if __name__ == '__main__':
